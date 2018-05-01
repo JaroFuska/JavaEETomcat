@@ -5,9 +5,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,26 +18,32 @@ public class SaveCodeServlet extends HttpServlet {
 
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String description = request.getParameter("description"); // Retrieves <input type="text" name="description">
-        Part filePart = request.getPart("file"); // Retrieves <input type="file" name="file">
-        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); // MSIE fix.
-        InputStream fileContent = filePart.getInputStream();
+        String fileName = request.getParameter("key");
+        String content = request.getParameter("value");
 
-//        File file = new File("/work/Catalina/localhost/ROOT", fileName);
+        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+        writer.write(content);
 
-//        Files.copy(fileContent, file.toPath());
-
-        dbManager.insert(fileName, fileName);
+        writer.close();
 
 
-
-        response.sendRedirect("tests.jsp");
+//        String description = request.getParameter("description"); // Retrieves <input type="text" name="description">
+//        Part filePart = request.getPart("file"); // Retrieves <input type="file" name="file">
+//        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); // MSIE fix.
+//        InputStream fileContent = filePart.getInputStream();
+//
+////        File file = new File("/work/Catalina/localhost/ROOT", fileName);
+//
+////        Files.copy(fileContent, file.toPath());
+//
+//        dbManager.insert(fileName, fileName);
+//
+//
+//
+//        response.sendRedirect("tests.jsp");
 
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        request.getRequestDispatcher("/index.jsp").forward(request, response);
-
-//            Stringrequest.getParameter("");
     }
 }

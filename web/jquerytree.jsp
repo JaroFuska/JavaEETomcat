@@ -89,11 +89,25 @@
     <link href="jquery.fileTree/jqueryFileTree.css" rel="stylesheet" type="text/css" media="screen"/>
 
     <script type="text/javascript">
-        var editor = null;
+        var editor;
+        var editedFiles = new Map();
+        var currentFile = null;
         $(window).load(function () {
             editor = ace.edit("editor");
             editor.setTheme("ace/theme/twilight");
             editor.session.setMode("ace/mode/python");
+            editor.commands.addCommand({
+                name: 'save',
+                bindKey: {win: "Ctrl-S", "mac": "Cmd-S"},
+                exec: function (editor) {
+                    // TODO handle save
+                    alert(editor.session.getValue());
+                }
+            });
+            editor.on("change", function () {
+                editedFiles.set(currentFile, editor.session.getValue());
+                // alert(editedFiles.size);
+            });
         })
 
 
@@ -108,30 +122,68 @@
                 collapseEasing: 'easeInBack',
                 loadMessage: 'Please wait...'
             }, function (file) {
-                document.getElementById("fileName").value = file;
-                $.post('/SetEditorTextServlet?fileName=' + file, function (data) {
-                    // $('#editor').text(data);
-                    // document.getElementById("editor").innerHTML = data;
-                    // alert(document.getElementById("editor"));
-                    editor.setValue(data, -1);
-                    // editor.setTheme("ace/theme/twilight");
-                    // editor.session.setMode("ace/mode/python");
-                });
+                currentFile = file;
+                <%-- TODO save file to map only if it changed and opening a new file --%>
+                // editedFiles.set(file, editor.session.getValue());
+                if (editedFiles.has(file)) {
+                    editor.session.setValue(editedFiles.get(file), -1);
+                } else {
+                    document.getElementById("fileName").value = file;
+                    $.post('/SetEditorTextServlet?fileName=' + file, function (data) {
+                        // $('#editor').text(data);
+                        // document.getElementById("editor").innerHTML = data;
+                        // alert(document.getElementById("editor"));
+                        editor.session.setValue(data, -1);
+                        // editor.setTheme("ace/theme/twilight");
+                        // editor.session.setMode("ace/mode/python");
+                    });
+                }
             });
         });
 
 
         function uploadFiles() {
             //    TODO - upload edited code to db.
-            var blob = new Blob([editor.getValue()], {type: "text/plain;charset=utf-8"});
-            alert(blob);
+            // var blob = new Blob([editor.session.getValue()], {type: "text/plain;charset=utf-8"});
+            // alert(blob);
+
+            for (let [key, value] of editedFiles) {
+                alert(key);
+                alert(value);
+                $.ajax({
+                    url: '/SaveCodeServlet',
+                    data: {
+                        key: key,
+                        value: value
+                    },
+                    type: 'POST'
+                });
+            }
+
+
+            // Object.keys(editedFiles).forEach(function(key) {
+            //     alert(key);
+            //     alert(editedFiles[key]);
+            //     $.ajax({
+            //         url: '/SaveCodeServlet',
+            //         data: {
+            //             key: key,
+            //             value: editedFiles[key]
+            //         },
+            //         type: 'POST'
+            //     });
+            // });
+
         }
 
     </script>
 
+
 </head>
 
 <body>
+
+
 <input id="fileName" type="hidden" value=""/>
 <section class="containerC">
     <div id="projectStructure" class="projectStructureC"></div>

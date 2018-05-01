@@ -33,7 +33,6 @@
 </head>
 <body>
 
-<%--TODO tree structure on the left, code editor on right--%>
 
 
 
