@@ -18,7 +18,6 @@ import java.util.ArrayList;
 public class SetEditorTextServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // TODO: 26-Apr-18 if file was not edited yet, read content from file else read content from edit array
         String fileName = request.getParameter("fileName");
         String text = new String(Files.readAllBytes(Paths.get(fileName)), StandardCharsets.UTF_8);  //reads file content from local storage
         response.setContentType("text/plain");

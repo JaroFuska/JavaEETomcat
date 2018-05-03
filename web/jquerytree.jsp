@@ -80,6 +80,50 @@
             float: bottom;
         }
 
+        #runFiles {
+            height: 5%;
+            float: bottom;
+        }
+
+        #ctxMenu{
+            display:none;
+            z-index:100;
+        }
+        menu {
+            position:absolute;
+            display:block;
+            left:0px;
+            top:0px;
+            height:20px;
+            width:20px;
+            padding:0;
+            margin:0;
+            border:1px solid;
+            background-color:white;
+            font-weight:normal;
+            white-space:nowrap;
+        }
+        menu:hover{
+            background-color:#eef;
+            font-weight:bold;
+        }
+        menu:hover > menu{
+            display:block;
+        }
+        menu > menu{
+            display:none;
+            position:relative;
+            top:-20px;
+            left:100%;
+            width:100px;
+        }
+        menu[title]:before{
+            content:attr(title);
+        }
+        menu:not([title]):before{
+            content:"\2630";
+        }
+
     </style>
 
     <script src="jquery.fileTree/jquery.js" type="text/javascript"></script>
@@ -100,14 +144,34 @@
                 name: 'save',
                 bindKey: {win: "Ctrl-S", "mac": "Cmd-S"},
                 exec: function (editor) {
-                    // TODO handle save
-                    alert(editor.session.getValue());
+                    // TODO handle save - call upload file for just currentFile
+                    // alert(editor.session.getValue());
                 }
             });
             editor.on("change", function () {
                 editedFiles.set(currentFile, editor.session.getValue());
                 // alert(editedFiles.size);
             });
+
+            var projectStructure = document.getElementById("projectStructure");
+            projectStructure.addEventListener("contextmenu",function(event){
+                event.preventDefault();
+                var ctxMenu = document.getElementById("ctxMenu");
+                ctxMenu.style.display = "block";
+                ctxMenu.style.left = (event.pageX - 10)+"px";
+                ctxMenu.style.top = (event.pageY - 10)+"px";
+                var addFile = document.getElementById("addFile");
+                addFile.addEventListener("click", function(event){
+                    alert("Creating new file");
+                });
+            },false);
+            projectStructure.addEventListener("click",function(event){
+                var ctxMenu = document.getElementById("ctxMenu");
+                ctxMenu.style.display = "";
+                ctxMenu.style.left = "";
+                ctxMenu.style.top = "";
+            },false);
+
         })
 
 
@@ -120,7 +184,8 @@
                 collapseSpeed: 750,
                 expandEasing: 'easeOutBounce',
                 collapseEasing: 'easeInBack',
-                loadMessage: 'Please wait...'
+                loadMessage: 'Please wait...',
+                folderEvent: 'dblclick'
             }, function (file) {
                 currentFile = file;
                 <%-- TODO save file to map only if it changed and opening a new file --%>
@@ -130,12 +195,7 @@
                 } else {
                     document.getElementById("fileName").value = file;
                     $.post('/SetEditorTextServlet?fileName=' + file, function (data) {
-                        // $('#editor').text(data);
-                        // document.getElementById("editor").innerHTML = data;
-                        // alert(document.getElementById("editor"));
                         editor.session.setValue(data, -1);
-                        // editor.setTheme("ace/theme/twilight");
-                        // editor.session.setMode("ace/mode/python");
                     });
                 }
             });
@@ -143,13 +203,7 @@
 
 
         function uploadFiles() {
-            //    TODO - upload edited code to db.
-            // var blob = new Blob([editor.session.getValue()], {type: "text/plain;charset=utf-8"});
-            // alert(blob);
-
             for (let [key, value] of editedFiles) {
-                alert(key);
-                alert(value);
                 $.ajax({
                     url: '/SaveCodeServlet',
                     data: {
@@ -159,23 +213,15 @@
                     type: 'POST'
                 });
             }
-
-
-            // Object.keys(editedFiles).forEach(function(key) {
-            //     alert(key);
-            //     alert(editedFiles[key]);
-            //     $.ajax({
-            //         url: '/SaveCodeServlet',
-            //         data: {
-            //             key: key,
-            //             value: editedFiles[key]
-            //         },
-            //         type: 'POST'
-            //     });
-            // });
-
         }
 
+        function runFiles() {
+            uploadFiles();
+            //TODO - find main method and run that file
+            $.post('/RunCodeServlet?fileName=' + currentFile, function (data) {
+                alert(data);
+            });
+        }
     </script>
 
 
@@ -186,6 +232,21 @@
 
 <input id="fileName" type="hidden" value=""/>
 <section class="containerC">
+    <menu id="ctxMenu">
+        <menu id="addFile" title="Add file"></menu>
+        <menu id="addFile1" title="Upload project" onclick="uploadFiles()"></menu>
+        <menu id="addFile2" title="Run project" onclick="runFiles()"></menu>
+        <%--<menu title="File">--%>
+            <%--<menu title="Save"></menu>--%>
+            <%--<menu title="Save As"></menu>--%>
+            <%--<menu title="Open"></menu>--%>
+        <%--</menu>--%>
+        <%--<menu title="Edit">--%>
+            <%--<menu title="Cut"></menu>--%>
+            <%--<menu title="Copy"></menu>--%>
+            <%--<menu title="Paste"></menu>--%>
+        <%--</menu>--%>
+    </menu>
     <div id="projectStructure" class="projectStructureC"></div>
 
     <pre id="editor">
@@ -198,6 +259,7 @@
 </section>
 
 <button id="uploadFiles" onclick="uploadFiles()">Upload codes</button>
+<button id="runFiles" onclick="runFiles()">Run codes</button>
 <script>
 </script>
 
@@ -205,3 +267,5 @@
 
 
 </html>
+
+
