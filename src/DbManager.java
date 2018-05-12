@@ -27,7 +27,7 @@ public class DbManager {
     }
 
     //TODO show different content when teacher is pressent
-    public boolean login(String login, String pass) {
+    public String login(String login, String pass) {
         Connection con = getConnection();
         String sql = "SELECT * FROM DP_USERS WHERE email = ? OR login = ?";
         try {
@@ -37,13 +37,14 @@ public class DbManager {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 if (rs.getString("PASSWORD").equals(pass)) {
-                    return true;
+                    String type = (rs.getBoolean("TEACHER") ? "teacher" : "student");
+                    return type;
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 
 

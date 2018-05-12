@@ -8,14 +8,22 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
+    <link rel="stylesheet" type="text/css" href="/CSS/main.css">
     <title>Login page</title>
 </head>
 <body>
+
 <form action="LoginServlet" method="post" enctype="multipart/form-data">
-    Login:<input id="login" type="text" name="login"><br>
-    Password:<input id="password" type="password" name="password"><br>
-    <input type="submit" value="Login"><br>
-<a href="registration.jsp">Register</a>
+<div class="container">
+    <label for="login"><b>Username</b></label>
+    <input type="text" placeholder="Enter Username" id="login" name="login" required>
+
+    <label for="password"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" id="password" name="password" required>
+
+    <button type="submit">Login</button>
+</div>
 </form>
+
 </body>
 </html>

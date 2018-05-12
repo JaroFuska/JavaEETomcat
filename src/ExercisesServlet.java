@@ -16,7 +16,7 @@ public class ExercisesServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int exercises = dbManager.getExercises();
         try (PrintWriter out = response.getWriter()) {
-            out.println("<html>\n" +
+            out.println("<!DOCTYPE html>\n<html>\n" +
                     "  <head>\n" +
                     "    <title>Exercises</title>\n" +
                     "<h1>Exercises</h1>\n" +
