@@ -20,12 +20,15 @@ public class RegistrationServlet extends HttpServlet {
         String firstname = request.getParameter("firstname");
         String lastname = request.getParameter("lastname");
         String email = request.getParameter("email");
-        String login = request.getParameter("login");
+        String login = (request.getParameter("login") ==  null ? email : request.getParameter("login"));
         String pass = null;
         try {
             pass = new MdHash().getHashPass(request.getParameter("password"));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
+        }
+        if (login == null) {
+            // TODO: 13-May-18 call update instead of insert 
         }
         boolean teacher = ((String) request.getParameter("teacher")).equals("on");
 

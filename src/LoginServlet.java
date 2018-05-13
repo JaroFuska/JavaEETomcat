@@ -12,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 @MultipartConfig
 public class LoginServlet extends HttpServlet {
     DbManager dbManager = new DbManager();
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String login = request.getParameter("login");
         String pass = null;
@@ -20,13 +21,17 @@ public class LoginServlet extends HttpServlet {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+        response.setContentType("text/plain");
+        response.setCharacterEncoding("UTF-8");
         String user = dbManager.login(login, pass);
-        request.getSession().setAttribute("user", user);
+        request.getSession().setAttribute("userType", user);
+        request.getSession().setAttribute("userLogin", login);
         if (user != null) {
-            RequestDispatcher rd = request.getRequestDispatcher("ExercisesServlet");
-            rd.forward(request,response);
+//            RequestDispatcher rd = request.getRequestDispatcher("ExercisesServlet");
+//            rd.forward(request,response);
+            response.getWriter().write("success");
         } else {
-            response.sendRedirect("index.jsp");
+            response.getWriter().write("fail");
         }
 
     }

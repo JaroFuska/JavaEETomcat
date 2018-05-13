@@ -1,27 +1,25 @@
 <%--
   Created by IntelliJ IDEA.
   User: jarof
-  Date: 28-Feb-18
-  Time: 14:50
+  Date: 13-May-18
+  Time: 20:17
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    String userType = (String) request.getSession().getAttribute("userType");
+    String userLogin = (String) request.getSession().getAttribute("userLogin");
+    if (userType == null) {
+        response.sendRedirect("index.jsp");
+    }
+%>
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="/CSS/main.css">
-    <style type="text/css" media="screen">
-        #login {
-            background-color: #4978af;
-        }
-    </style>
-    <title>Registration page</title>
+    <title>Update profile</title>
 </head>
 <body>
-<script type="text/javascript">
-    function login() {
-        window.location.href = "index.jsp";
-    }
-</script>
+<%--TODO get user information from DB and fill fields--%>
 <form action="RegistrationServlet" method="post" enctype="multipart/form-data">
     First name:<input type="text" name="firstname" required><br>
     Last name:<input type="text" name="lastname" required><br>
@@ -30,9 +28,8 @@
     Password:<input id="pass" type="password" name="password" onkeyup="passCheck()" required><br>
     Repeat password:<input id="repPass" type="password" name="repPassword" onkeyup="passCheck()" required><br>
     Teacher <input type="checkbox" name="teacher"><br>
-    <button type="submit">Register</button>
+    <button type="submit">Update</button>
 </form>
-<button id="login" onclick="login()">Login</button>
 </body>
 <script>
     function passCheck() {

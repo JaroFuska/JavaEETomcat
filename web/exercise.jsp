@@ -8,31 +8,23 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     String ex = request.getParameter("ex");
-    String user = (String) request.getSession().getAttribute("user");
+    String userType = (String) request.getSession().getAttribute("userType");
+    if (userType == null) {
+        response.sendRedirect("index.jsp");
+    }
 %>
 <html>
 <script src="jquery.fileTree/jquery.js" type="text/javascript"></script>
-<script type='text/javascript'>
-    alert('<%=user%>');
-    if ('<%=user%>' == 'student') {
-        alert("nehehe")
-        <%--document.getElementById('editCode').value = "<%=ex%>";--%>
-        $.ajax({
-            url: '/CreateProjectServlet',
-            data: {
-                ex: "<%=ex%>"
-            },
-            type: 'POST',
-            success: function (data) {
-                document.location.href = '/jquerytree.jsp?root=' + data;
-            }
-        });
-    }
-</script>
+<link rel="stylesheet" type="text/css" href="/CSS/main.css">
 <head>
     <title>Exercise preparation</title>
 </head>
 <body>
+<ul>
+    <li><a href="exercises.jsp">Exercises</a></li>
+    <li><a href="settings.jsp">Settings</a></li>
+    <li><a href="logout.jsp">Logout</a></li>
+</ul>
 <h1>
     Exercise ${param.ex}
 </h1>
@@ -41,13 +33,24 @@
     Directory with exercise files:<input type="file" name="codes" webkitdirectory mozdirectory msdirectory odirectory
                                          directory><br>
     <input type="hidden" name="ex" value="<%=ex%>"/>
-    <input type="submit" value="Upload">
+    <%--<input type="submit" value="Upload">--%>
+    <button type="submit">Upload</button>
 </form>
+    <button id="editCodes">Edit code</button>
+<script type='text/javascript'>
+    document.getElementById("editCodes").addEventListener("click", function(){
+        $.ajax({
+            url: '/CreateProjectServlet',
+            data: {
+                ex: "<%=ex%>"
+            },
+            type: 'POST',
+            success: function (data) {
+                document.location.href = '/editCode.jsp?root=' + data;
+            }
+        });
+    });
 
-<form method="post" action="CreateProjectServlet" enctype="multipart/form-data">
-    <%--TODO add version of exercise to edit--%>
-    <input type="hidden" id="editCode" name="ex" value="<%=ex%>"/>
-    <input type="submit" value="Edit code">
-</form>
+</script>
 </body>
 </html>

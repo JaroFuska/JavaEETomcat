@@ -30,8 +30,6 @@ public class CreateProjectServlet extends HttpServlet {
         response.setContentType("text/plain");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(rootDir);
-//        RequestDispatcher rd = request.getRequestDispatcher("jquerytree.jsp?root=" + rootDir);
-//        rd.forward(request,response);
 
     }
 
