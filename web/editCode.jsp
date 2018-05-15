@@ -1,15 +1,20 @@
 <%@ page import="java.io.File" %>
+<%@ page import="dbmanager.DbManager" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     String root = request.getParameter("root");
     String userType = (String) request.getSession().getAttribute("userType");
+    String ex = (String) request.getSession().getAttribute("ex");
     if (userType == null) {
         response.sendRedirect("index.jsp");
     }
+    DbManager db = new DbManager();
+    String exerciseDesc = db.getExerciseDesc(ex);
 %>
 <html lang="en">
 <head>
-    <title>jQuery File Tree Demo</title>
+    <title>Code editor</title>
+    <link rel="stylesheet" type="text/css" href="/CSS/main.css">
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 
     <style type="text/css">
@@ -226,16 +231,21 @@
                 alert(data);
             });
         }
+
+        function showDesc() {
+            alert('<%=exerciseDesc%>');
+        }
     </script>
 
 
 </head>
 
 <body>
-<ul>
-    <li><a href="exercises.jsp">Exercises</a></li>
-    <li><a href="settings.jsp">Settings</a></li>
-    <li><a href="logout.jsp">Logout</a></li>
+<ul class="menu">
+    <li class="menu"><a href="exercises.jsp">Exercises</a></li>
+    <li class="menu"><a href="settings.jsp">Settings</a></li>
+    <li class="menu"><a href="logout.jsp">Logout</a></li>
+    <li class="menu"><button class="menu" id="desc" onclick="showDesc()">Exercise description</button></li>
 </ul>
 
 <input id="fileName" type="hidden" value=""/>
@@ -252,10 +262,8 @@
     </pre>
 </section>
 
-<button id="uploadFiles" onclick="uploadFiles()">Upload codes</button>
-<button id="runFiles" onclick="runFiles()">Run codes</button>
-<script>
-</script>
+<button class="regular" id="uploadFiles" onclick="uploadFiles()">Upload codes</button>
+<button class="regular" id="runFiles" onclick="runFiles()">Run codes</button>
 
 </body>
 

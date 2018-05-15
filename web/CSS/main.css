@@ -11,7 +11,7 @@ input[type=text], input[type=password] {
     box-sizing: border-box;
 }
 
-button {
+button.regular {
     background-color: #4CAF50;
     color: white;
     padding: 14px 20px;
@@ -25,6 +25,10 @@ button:hover {
     opacity: 0.8;
 }
 
+button:disabled {
+    opacity: 0.2;
+}
+
 .container {
     padding: 16px;
 }
@@ -34,7 +38,7 @@ span.password {
     padding-top: 16px;
 }
 
-ul {
+ul.menu {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -42,11 +46,11 @@ ul {
     background-color: #000000;
 }
 
-li {
+li.menu {
     float: left;
 }
 
-li a {
+li.menu a {
     display: inline-block;
     color: white;
     text-align: center;
@@ -54,7 +58,28 @@ li a {
     text-decoration: none;
 }
 
-li a:hover {
+li.menu a:hover {
+    background-color: #02af0b;
+}
+
+button.menu {
+    float: left;
+    display: inline-block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li.menu button {
+    display: inline-block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li.menu button:hover {
     background-color: #02af0b;
 }
 

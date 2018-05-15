@@ -30,18 +30,21 @@
     Password:<input id="pass" type="password" name="password" onkeyup="passCheck()" required><br>
     Repeat password:<input id="repPass" type="password" name="repPassword" onkeyup="passCheck()" required><br>
     Teacher <input type="checkbox" name="teacher"><br>
-    <button type="submit">Register</button>
+    <button class="regular" id="submit" type="submit" disabled="true">Register</button>
 </form>
-<button id="login" onclick="login()">Login</button>
+<button class="regular" id="login" onclick="login()">Login</button>
 </body>
 <script>
+    document.getElementById("submit").disabled = true;
     function passCheck() {
         var pass = document.getElementById("pass").value;
         var pass2 = document.getElementById("repPass");
         if (pass != pass2.value) {
             pass2.style.color = "red";
+            document.getElementById("submit").disabled = true;
         } else {
             pass2.style.color = "green";
+            document.getElementById("submit").disabled = false;
         }
     }
 </script>

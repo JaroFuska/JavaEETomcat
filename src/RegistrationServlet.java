@@ -1,4 +1,4 @@
-import sun.security.util.Password;
+import dbmanager.DbManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -7,8 +7,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 @WebServlet(name = "/RegistrationServlet", urlPatterns = {"/RegistrationServlet"})
@@ -28,17 +26,27 @@ public class RegistrationServlet extends HttpServlet {
             e.printStackTrace();
         }
         if (login == null) {
-            // TODO: 13-May-18 call update instead of insert 
+            // TODO: 13-May-18 call update instead of insert
         }
-        boolean teacher = ((String) request.getParameter("teacher")).equals("on");
-
-
-        String regReturn = dbManager.dp_users_insert(firstname, lastname, email, login, pass, teacher);
-        if (regReturn == "OK") {
-            response.sendRedirect("index.jsp");
+        if (request.getParameter("teacher") == null) {
+            String regReturn = dbManager.dp_users_update(firstname, lastname, pass, login);
+            if (regReturn == "OK") {
+                response.sendRedirect("settings.jsp");
+            } else {
+                //TODO - print info about what goes wrong
+                response.sendRedirect("settings.jsp");
+            }
         } else {
-            //TODO - print info about what goes wrong
-            response.sendRedirect("registration.jsp");
+            boolean teacher = ((String) request.getParameter("teacher")).equals("on");
+
+
+            String regReturn = dbManager.dp_users_insert(firstname, lastname, email, login, pass, teacher);
+            if (regReturn == "OK") {
+                response.sendRedirect("index.jsp");
+            } else {
+                //TODO - print info about what goes wrong
+                response.sendRedirect("registration.jsp");
+            }
         }
 
     }

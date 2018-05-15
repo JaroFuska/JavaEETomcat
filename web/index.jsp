@@ -63,10 +63,10 @@
         <label for="password"><b>Password</b></label>
         <input type="password" placeholder="Enter Password" id="password" name="password" required>
 
-        <button type="submit">Login</button>
+        <button class="regular" type="submit">Login</button>
     </div>
 </form>
-<button id="register" onclick="register()">Registration</button>
+<button class="regular" id="register" onclick="register()">Registration</button>
 
 </body>
 </html>

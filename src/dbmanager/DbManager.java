@@ -1,6 +1,8 @@
+package dbmanager;
+
 import java.io.*;
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DbManager {
     private final String DB_URL = "jdbc:mysql://localhost/DP";
@@ -68,6 +70,23 @@ public class DbManager {
         return "OK";
     }
 
+    public String dp_users_update(String firstname, String lastname, String pass, String login) {
+        Connection con = getConnection();
+        String sql = "UPDATE DP_USERS SET first_name = ?, last_name = ?, password = ? WHERE login = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, firstname);
+            ps.setString(2, lastname);
+            ps.setString(3, pass);
+            ps.setString(4, login);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return e.getMessage();
+        }
+        return "OK";
+    }
+
     public String dp_exercise_files_dir_insert(int exerciseID, File file, String path, String text) throws FileNotFoundException {
         if (file.isDirectory()) {
             for (File f : file.listFiles()) {
@@ -125,6 +144,21 @@ public class DbManager {
         return count;
     }
 
+    public String getExerciseDesc(String exerciseID) {
+        Connection con = getConnection();
+        String ret = "";
+        try {
+            PreparedStatement statement = con.prepareStatement("SELECT TEXT FROM dp_exercises where exercise_id = ?");
+            statement.setString(1, exerciseID);
+            ResultSet rs = statement.executeQuery();
+            rs.next();
+            ret = rs.getString("TEXT");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
     public String createExercise(int exerciseID) throws SQLException, IOException {
         String mainDir = "";
         Connection con = getConnection();
@@ -154,18 +188,6 @@ public class DbManager {
         return mainDir;
     }
 
-//    public void insert(InputStream code, InputStream test) {
-//        try {
-//            Connection conn = getConnection();
-//            PreparedStatement pstm = conn.prepareStatement("INSERT INTO DP_RUN_FILES (code, test) VALUES(?, ?)");
-//            pstm.setBlob(1, code);
-//            pstm.setBlob(2, test);
-//            pstm.execute();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     public void insert(String code, String test) {
         try {
             Connection conn = getConnection();
@@ -176,6 +198,23 @@ public class DbManager {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public HashMap<String, String> getUserData(String login) {
+        Connection con = getConnection();
+        HashMap<String, String> map = new HashMap<>();
+        try {
+            PreparedStatement statement = con.prepareStatement("SELECT * FROM dp_users where login = ?");
+            statement.setString(1, login);
+            ResultSet rs = statement.executeQuery();
+            rs.next();
+            map.put("first_name", rs.getString("FIRST_NAME"));
+            map.put("last_name", rs.getString("LAST_NAME"));
+            map.put("email", rs.getString("EMAIL"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return map;
     }
 
     public static void main(String[] args) throws Exception {

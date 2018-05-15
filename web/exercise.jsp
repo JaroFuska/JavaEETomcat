@@ -20,10 +20,10 @@
     <title>Exercise preparation</title>
 </head>
 <body>
-<ul>
-    <li><a href="exercises.jsp">Exercises</a></li>
-    <li><a href="settings.jsp">Settings</a></li>
-    <li><a href="logout.jsp">Logout</a></li>
+<ul class="menu">
+    <li class="menu"><a href="exercises.jsp">Exercises</a></li>
+    <li class="menu"><a href="settings.jsp">Settings</a></li>
+    <li class="menu"><a href="logout.jsp">Logout</a></li>
 </ul>
 <h1>
     Exercise ${param.ex}
@@ -34,9 +34,9 @@
                                          directory><br>
     <input type="hidden" name="ex" value="<%=ex%>"/>
     <%--<input type="submit" value="Upload">--%>
-    <button type="submit">Upload</button>
+    <button class="regular" type="submit">Upload</button>
 </form>
-    <button id="editCodes">Edit code</button>
+    <button class="regular" id="editCodes">Edit code</button>
 <script type='text/javascript'>
     document.getElementById("editCodes").addEventListener("click", function(){
         $.ajax({

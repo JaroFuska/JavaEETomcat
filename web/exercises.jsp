@@ -19,10 +19,10 @@
 </head>
 <body>
 <script src="jquery.fileTree/jquery.js" type="text/javascript"></script>
-<ul>
-    <li><a href="exercises.jsp" class="active">Exercises</a></li>
-    <li><a href="settings.jsp">Settings</a></li>
-    <li><a href="logout.jsp">Logout</a></li>
+<ul class="menu">
+    <li class="menu"><a href="exercises.jsp" class="active">Exercises</a></li>
+    <li class="menu"><a href="settings.jsp">Settings</a></li>
+    <li class="menu"><a href="logout.jsp">Logout</a></li>
 </ul>
 </body>
 <script type="text/javascript">
@@ -67,7 +67,7 @@
     }, false);
 </script>
 <div id="exercisesHolder"></div>
-<button id="addExercise">Add exercise</button>
+<button class="regular" id="addExercise">Add exercise</button>
 <script>
     if ('<%=userType%>' == 'student') {
         document.getElementById('addExercise').style.visibility = 'hidden';
