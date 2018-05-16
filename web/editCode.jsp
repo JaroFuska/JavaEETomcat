@@ -203,7 +203,7 @@
                     editor.session.setValue(editedFiles.get(file), -1);
                 } else {
                     document.getElementById("fileName").value = file;
-                    $.post('/SetEditorTextServlet?fileName=' + file, function (data) {
+                    $.post('/main.java.main.SetEditorTextServlet?fileName=' + file, function (data) {
                         editor.session.setValue(data, -1);
                     });
                 }
@@ -214,7 +214,7 @@
         function uploadFiles() {
             for (let [key, value] of editedFiles) {
                 $.ajax({
-                    url: '/SaveCodeServlet',
+                    url: '/main.java.main.SaveCodeServlet',
                     data: {
                         key: key,
                         value: value
@@ -227,7 +227,7 @@
         function runFiles() {
             uploadFiles();
             //TODO - find main method and run that file
-            $.post('/RunCodeServlet?fileName=' + currentFile, function (data) {
+            $.post('/main.java.main.RunCodeServlet?fileName=' + currentFile, function (data) {
                 alert(data);
             });
         }

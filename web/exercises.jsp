@@ -27,12 +27,13 @@
 </body>
 <script type="text/javascript">
     var ex;
-    $.post('/ExercisesServlet', function (data) {
+    $.post('/main.java.main.ExercisesServlet', function (data) {
         ex = data;
         var i;
         for (i = 1; i <= data; i++) {
             var btn = document.createElement("BUTTON");
             btn.id = i;
+            btn.className = "regular";
             var t = document.createTextNode("Exercise " + i);
             btn.appendChild(t);
             document.getElementById("exercisesHolder").appendChild(btn);
@@ -50,7 +51,7 @@
             } else {
                 if ('<%=userType%>' == 'student') {
                     $.ajax({
-                        url: '/CreateProjectServlet',
+                        url: '/main.java.main.CreateProjectServlet',
                         data: {
                             ex: id
                         },

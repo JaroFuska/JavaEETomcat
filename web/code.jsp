@@ -38,7 +38,7 @@
 
 
 <%--<p id="someID"></p>--%>
-<%--<form action="SaveCodeServlet" method="post" enctype="multipart/form-data">--%>
+<%--<form action="main.java.main.SaveCodeServlet" method="post" enctype="multipart/form-data">--%>
 <%--<input type="submit" name="printButt" value="Button 1" />--%>
 <%--<input type="file" name="file">--%>
 <%--</form>--%>

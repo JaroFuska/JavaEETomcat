@@ -26,7 +26,7 @@
             $.ajax
             ({
                 type: 'post',
-                url: '/LoginServlet',
+                url: '/main.java.main.LoginServlet',
                 data: {
                     login: login,
                     password: pass
@@ -39,7 +39,7 @@
                     }
                     else {
                         window.location.href = "exercises.jsp";
-                        // $.post('/ExercisesServlet');
+                        // $.post('/main.java.main.ExercisesServlet');
                     }
                 }
             });
@@ -54,7 +54,7 @@
     }
 </script>
 
-<%--<form action="LoginServlet" method="post" enctype="multipart/form-data">--%>
+<%--<form action="main.java.main.LoginServlet" method="post" enctype="multipart/form-data">--%>
 <form method="post" action="LoginServlet" onsubmit="return loginFunc();">
     <div class="container">
         <label for="login"><b>Username</b></label>

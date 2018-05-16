@@ -40,7 +40,7 @@
 <script type='text/javascript'>
     document.getElementById("editCodes").addEventListener("click", function(){
         $.ajax({
-            url: '/CreateProjectServlet',
+            url: '/main.java.main.CreateProjectServlet',
             data: {
                 ex: "<%=ex%>"
             },
