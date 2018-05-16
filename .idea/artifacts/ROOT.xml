@@ -1,6 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="ear" name="ROOT">
-    <output-path>$PROJECT_DIR$/out/artifacts/ROOT</output-path>
-    <root id="archive" name="ROOT.ear" />
-  </artifact>
-</component>

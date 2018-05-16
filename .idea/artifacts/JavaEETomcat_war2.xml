@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="JavaEETomcat:war2">
+    <output-path>$PROJECT_DIR$/out/artifacts/JavaEETomcat_war2</output-path>
+    <root id="archive" name="JavaEETomcat_war.war">
+      <element id="artifact" artifact-name="JavaEETomcat:war exploded" />
+    </root>
+  </artifact>
+</component>
