@@ -64,6 +64,21 @@ public class DbManager {
         return "OK";
     }
 
+    public String setStatus(String id, int status) {
+        Connection con = getConnection();
+        String sql = "UPDATE DP_USERS SET status = ? WHERE user_id = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, status);
+            ps.setInt(2, Integer.parseInt(id));
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return e.getMessage();
+        }
+        return "OK";
+    }
+
     public String dp_users_insert(String firstname, String lastname, String email, String login, String pass, boolean teacher) {
         Connection con = getConnection();
         String sql = "INSERT INTO DP_USERS (first_name, last_name, email, login, password, teacher, status)" +

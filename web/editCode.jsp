@@ -139,10 +139,6 @@
             content: "\2630";
         }
 
-        .hide {
-            display: none;
-        }
-
     </style>
 
     <script src="jquery.fileTree/jquery.js" type="text/javascript"></script>
