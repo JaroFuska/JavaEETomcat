@@ -22,19 +22,19 @@
         window.location.href = "index.jsp";
     }
 </script>
-<form action="RegistrationServlet" method="post" enctype="multipart/form-data">
+<form action="/main.java.main.RegistrationServlet" method="post" enctype="multipart/form-data">
     First name:<input type="text" name="firstname" required><br>
     Last name:<input type="text" name="lastname" required><br>
     Email:<input type="text" name="email" required><br>
     Login:<input type="text" name="login"><br>
     Password:<input id="pass" type="password" name="password" onkeyup="passCheck()" required><br>
     Repeat password:<input id="repPass" type="password" name="repPassword" onkeyup="passCheck()" required><br>
-    Teacher <input type="checkbox" name="teacher"><br>
+    Teacher:<input id="teacher" type="checkbox" name="teacher"><br>
     <button class="regular" id="submit" type="submit" disabled="true">Register</button>
 </form>
 <button class="regular" id="login" onclick="login()">Login</button>
 </body>
-<script>
+<script type="text/javascript">
     document.getElementById("submit").disabled = true;
     function passCheck() {
         var pass = document.getElementById("pass").value;

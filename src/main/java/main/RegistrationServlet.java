@@ -27,11 +27,8 @@ public class RegistrationServlet extends HttpServlet {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        if (login == null) {
-            // TODO: 13-May-18 call update instead of insert
-        }
-        if (request.getParameter("teacher") == null) {
-            String regReturn = dbManager.dp_users_update(firstname, lastname, pass, login);
+        if (request.getSession().getAttribute("userType") != null) {
+            String regReturn = dbManager.dp_users_update(firstname, lastname, pass, login, null);
             if (regReturn == "OK") {
                 response.sendRedirect("settings.jsp");
             } else {
@@ -39,7 +36,7 @@ public class RegistrationServlet extends HttpServlet {
                 response.sendRedirect("settings.jsp");
             }
         } else {
-            boolean teacher = ((String) request.getParameter("teacher")).equals("on");
+            boolean teacher = ((String) request.getParameter("teacher")) != null;
 
 
             String regReturn = dbManager.dp_users_insert(firstname, lastname, email, login, pass, teacher);

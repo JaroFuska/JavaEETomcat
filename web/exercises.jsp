@@ -28,16 +28,26 @@
 <script type="text/javascript">
     var ex;
     $.post('/main.java.main.ExercisesServlet', function (data) {
-        ex = data;
-        var i;
-        for (i = 1; i <= data; i++) {
+        // ex = data;
+        var i = 0;
+        $.each(JSON.parse(data), function(index, item) {
             var btn = document.createElement("BUTTON");
-            btn.id = i;
+            btn.id = item;
             btn.className = "regular";
-            var t = document.createTextNode("Exercise " + i);
+            var t = document.createTextNode("Exercise " + item);
             btn.appendChild(t);
             document.getElementById("exercisesHolder").appendChild(btn);
-        }
+            i++;
+        });
+        ex = i;
+        // for (i = 1; i <= data; i++) {
+        //     var btn = document.createElement("BUTTON");
+        //     btn.id = i;
+        //     btn.className = "regular";
+        //     var t = document.createTextNode("Exercise " + i);
+        //     btn.appendChild(t);
+        //     document.getElementById("exercisesHolder").appendChild(btn);
+        // }
     });
 
     document.addEventListener('click', function (e) {

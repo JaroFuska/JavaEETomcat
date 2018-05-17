@@ -2,7 +2,9 @@ package dbmanager;
 
 import java.io.*;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class DbManager {
     private final String DB_URL = "jdbc:mysql://localhost/DP";
@@ -28,10 +30,9 @@ public class DbManager {
         return con;
     }
 
-    //TODO show different content when teacher is pressent
     public String login(String login, String pass) {
         Connection con = getConnection();
-        String sql = "SELECT * FROM DP_USERS WHERE email = ? OR login = ?";
+        String sql = "SELECT * FROM DP_USERS WHERE email = ? OR login = ? AND STATUS = 1";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, login);
@@ -52,8 +53,8 @@ public class DbManager {
 
     public String dp_users_insert(String firstname, String lastname, String email, String login, String pass, boolean teacher) {
         Connection con = getConnection();
-        String sql = "INSERT INTO DP_USERS (first_name, last_name, email, login, password, teacher)" +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO DP_USERS (first_name, last_name, email, login, password, teacher, status)" +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, firstname);
@@ -62,6 +63,7 @@ public class DbManager {
             ps.setString(4, login);
             ps.setString(5, pass);
             ps.setBoolean(6, teacher);
+            ps.setInt(7, 3);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -70,15 +72,19 @@ public class DbManager {
         return "OK";
     }
 
-    public String dp_users_update(String firstname, String lastname, String pass, String login) {
+    public String dp_users_update(String firstname, String lastname, String pass, String login, Integer status) {
+        if (status == null) {
+            status = 3;
+        }
         Connection con = getConnection();
-        String sql = "UPDATE DP_USERS SET first_name = ?, last_name = ?, password = ? WHERE login = ?";
+        String sql = "UPDATE DP_USERS SET first_name = ?, last_name = ?, password = ?, status = ? WHERE login = ?";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, firstname);
             ps.setString(2, lastname);
             ps.setString(3, pass);
             ps.setString(4, login);
+            ps.setInt(5, status);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -115,13 +121,12 @@ public class DbManager {
         return "OK";
     }
 
-    public String dp_exercise_files_update(int exerciseID, String text) {
+    public String dp_exercise_files_delete(int exerciseID) {
         Connection con = getConnection();
-        String sql = "UPDATE dp_exercises SET text = ? WHERE exercise_id = ?";
+        String sql = "DELETE FROM dp_exercise_files WHERE exercise_id = ?";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, text);
-            ps.setInt(2, exerciseID);
+            ps.setInt(1, exerciseID);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -130,7 +135,43 @@ public class DbManager {
         return "OK";
     }
 
-    public int getExercises() {
+    public String dp_exercises_insert(int exerciseID, String text, boolean visible) {
+        if (getExercisesCount() >= exerciseID) {
+            return dp_exercises_update(exerciseID, text, visible);
+        } else {
+            Connection con = getConnection();
+            String sql = "INSERT INTO dp_exercises (exercise_id, text, visible) VALUES(?, ?, ?)";
+            try {
+                PreparedStatement ps = con.prepareStatement(sql);
+                ps.setInt(1, exerciseID);
+                ps.setString(2, text);
+                ps.setBoolean(3, visible);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return e.getMessage();
+            }
+            return "OK";
+        }
+    }
+
+    public String dp_exercises_update(int exerciseID, String text, boolean visible) {
+        Connection con = getConnection();
+        String sql = "UPDATE dp_exercises SET text = ?, visible = ? WHERE exercise_id = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, text);
+            ps.setBoolean(2, visible);
+            ps.setInt(3, exerciseID);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return e.getMessage();
+        }
+        return "OK";
+    }
+
+    public int getExercisesCount() {
         Connection con = getConnection();
         int count = 0;
         try {
@@ -144,6 +185,21 @@ public class DbManager {
         return count;
     }
 
+    public List<String> getVisibleExercises() {
+        Connection con = getConnection();
+        List<String> list = new ArrayList<>();
+        try {
+            Statement statement = con.createStatement();
+            ResultSet rs = statement.executeQuery("SELECT exercise_id FROM dp_exercises WHERE visible = 1");
+            while (rs.next()) {
+                list.add(Integer.toString(rs.getInt(1)));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public String getExerciseDesc(String exerciseID) {
         Connection con = getConnection();
         String ret = "";
@@ -153,6 +209,21 @@ public class DbManager {
             ResultSet rs = statement.executeQuery();
             rs.next();
             ret = rs.getString("TEXT");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
+    public boolean getExerciseVisibility(String exerciseID) {
+        Connection con = getConnection();
+        boolean ret = false;
+        try {
+            PreparedStatement statement = con.prepareStatement("SELECT VISIBLE FROM dp_exercises where exercise_id = ?");
+            statement.setString(1, exerciseID);
+            ResultSet rs = statement.executeQuery();
+            rs.next();
+            ret = rs.getBoolean("VISIBLE");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -211,6 +282,7 @@ public class DbManager {
             map.put("first_name", rs.getString("FIRST_NAME"));
             map.put("last_name", rs.getString("LAST_NAME"));
             map.put("email", rs.getString("EMAIL"));
+            map.put("status", Integer.toString(rs.getInt("STATUS")));
         } catch (SQLException e) {
             e.printStackTrace();
         }

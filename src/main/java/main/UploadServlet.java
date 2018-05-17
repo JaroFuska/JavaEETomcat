@@ -23,23 +23,24 @@ public class UploadServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int exercise = Integer.parseInt(request.getParameter("ex"));
         String text = request.getParameter("text");
+        boolean visible = ((String) request.getParameter("visible")).equals("on");
 
+        dbManager.dp_exercises_insert(exercise, text, visible);
+        dbManager.dp_exercise_files_delete(exercise);
 
         ArrayList<Part> parts = (ArrayList<Part>) request.getParts();
         for (Part part : parts) {
             if (part != null) {
                 if (part.getName().equals("codes")) {
                     String path = part.getSubmittedFileName();
-                    // TODO: 11-Apr-18 here i have all files submitted from form - upload them to DB, then download them from DB to code editor
                     dbManager.dp_exercise_files_file_insert(exercise, part.getInputStream(), path, text);
                 }
             }
         }
-        // TODO: 22-Mar-18 exercise.jsp has to be servlet to load content from exercise
         PrintWriter out = response.getWriter();
         out.println("Files were uploaded!");
         RequestDispatcher rd = request.getRequestDispatcher("exercise.jsp?ex=" + exercise);
-        rd.forward(request,response);
+        rd.forward(request, response);
 
     }
 
