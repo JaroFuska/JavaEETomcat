@@ -28,7 +28,7 @@ public class RegistrationServlet extends HttpServlet {
             e.printStackTrace();
         }
         if (request.getSession().getAttribute("userType") != null) {
-            String regReturn = dbManager.dp_users_update(firstname, lastname, pass, login, null);
+            String regReturn = dbManager.dp_users_update(firstname, lastname, pass, login);
             if (regReturn == "OK") {
                 response.sendRedirect("settings.jsp");
             } else {

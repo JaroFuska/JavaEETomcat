@@ -87,6 +87,10 @@ li.menu button:hover {
     background-color: #008bff;
 }
 
+.hide {
+    display: none;
+}
+
 @media screen and (max-width: 300px) {
     span.psw {
         display: block;

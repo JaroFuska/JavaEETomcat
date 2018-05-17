@@ -22,6 +22,7 @@
 <ul class="menu">
     <li class="menu"><a href="exercises.jsp" class="active">Exercises</a></li>
     <li class="menu"><a href="settings.jsp">Settings</a></li>
+    <li id="users"><a href="users.jsp">Users</a></li>
     <li class="menu"><a href="logout.jsp">Logout</a></li>
 </ul>
 </body>
@@ -82,8 +83,10 @@
 <script>
     if ('<%=userType%>' == 'student') {
         document.getElementById('addExercise').style.visibility = 'hidden';
+        document.getElementById("users").className = "hide";
     } else {
         document.getElementById('addExercise').style.visibility = 'visible';
+        document.getElementById("users").className = "menu";
     }
 </script>
 </html>

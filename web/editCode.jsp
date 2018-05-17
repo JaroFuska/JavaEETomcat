@@ -94,43 +94,53 @@
             float: bottom;
         }
 
-        #ctxMenu{
-            display:none;
-            z-index:100;
+        #ctxMenu {
+            display: none;
+            z-index: 100;
         }
+
         menu {
-            position:absolute;
-            display:block;
-            left:0px;
-            top:0px;
-            height:20px;
-            width:20px;
-            padding:0;
-            margin:0;
-            border:1px solid;
-            background-color:white;
-            font-weight:normal;
-            white-space:nowrap;
+            position: absolute;
+            display: block;
+            left: 0px;
+            top: 0px;
+            height: 20px;
+            width: 20px;
+            padding: 0;
+            margin: 0;
+            border: 1px solid;
+            background-color: white;
+            font-weight: normal;
+            white-space: nowrap;
         }
-        menu:hover{
-            background-color:#eef;
-            font-weight:bold;
+
+        menu:hover {
+            background-color: #eef;
+            font-weight: bold;
         }
-        menu:hover > menu{
-            display:block;
+
+        menu:hover > menu {
+            display: block;
         }
-        menu > menu{
-            display:none;
-            position:relative;
-            top:-20px;
-            left:100%;
-            width:100px;
+
+        menu > menu {
+            display: none;
+            position: relative;
+            top: -20px;
+            left: 100%;
+            width: 100px;
         }
-        menu[title]:before{
-            content:attr(title);
+
+        menu[title]:before {
+            content: attr(title);
         }
-        menu:not([title]):before{
-            content:"\2630";
+
+        menu:not([title]):before {
+            content: "\2630";
+        }
+
+        .hide {
+            display: none;
         }
 
     </style>
@@ -163,23 +173,23 @@
             });
 
             var projectStructure = document.getElementById("projectStructure");
-            projectStructure.addEventListener("contextmenu",function(event){
+            projectStructure.addEventListener("contextmenu", function (event) {
                 event.preventDefault();
                 var ctxMenu = document.getElementById("ctxMenu");
                 ctxMenu.style.display = "block";
-                ctxMenu.style.left = (event.pageX - 10)+"px";
-                ctxMenu.style.top = (event.pageY - 10)+"px";
+                ctxMenu.style.left = (event.pageX - 10) + "px";
+                ctxMenu.style.top = (event.pageY - 10) + "px";
                 var addFile = document.getElementById("addFile");
-                addFile.addEventListener("click", function(event){
+                addFile.addEventListener("click", function (event) {
                     alert("Creating new file");
                 });
-            },false);
-            projectStructure.addEventListener("click",function(event){
+            }, false);
+            projectStructure.addEventListener("click", function (event) {
                 var ctxMenu = document.getElementById("ctxMenu");
                 ctxMenu.style.display = "";
                 ctxMenu.style.left = "";
                 ctxMenu.style.top = "";
-            },false);
+            }, false);
 
         })
 
@@ -245,7 +255,10 @@
     <li class="menu"><a href="exercises.jsp">Exercises</a></li>
     <li class="menu"><a href="settings.jsp">Settings</a></li>
     <li class="menu"><a href="logout.jsp">Logout</a></li>
-    <li class="menu"><button class="menu" id="desc" onclick="showDesc()">Exercise description</button></li>
+    <li id="users"><a href="users.jsp">Users</a></li>
+    <li class="menu">
+        <button class="menu" id="desc" onclick="showDesc()">Exercise description</button>
+    </li>
 </ul>
 
 <input id="fileName" type="hidden" value=""/>
@@ -266,7 +279,13 @@
 <button class="regular" id="runFiles" onclick="runFiles()">Run codes</button>
 
 </body>
-
+<script type="text/javascript">
+    if ('<%=userType%>' == 'student') {
+        document.getElementById("users").className = "hide";
+    } else {
+        document.getElementById("users").className = "menu";
+    }
+</script>
 
 </html>
 

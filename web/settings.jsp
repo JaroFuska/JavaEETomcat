@@ -27,6 +27,7 @@
 <ul class="menu">
     <li class="menu"><a href="exercises.jsp">Exercises</a></li>
     <li class="menu"><a href="settings.jsp" class="active">Settings</a></li>
+    <li id="users"><a href="users.jsp">Users</a></li>
     <li class="menu"><a href="logout.jsp">Logout</a></li>
 </ul>
 <%--TODO get user information from DB and fill fields--%>
@@ -52,6 +53,11 @@
             pass2.style.color = "green";
             document.getElementById("submit").disabled = false;
         }
+    }
+    if ('<%=userType%>' == 'student') {
+        document.getElementById("users").className = "hide";
+    } else {
+        document.getElementById("users").className = "menu";
     }
 </script>
 </html>

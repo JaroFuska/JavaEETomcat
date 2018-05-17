@@ -26,6 +26,7 @@
 <ul class="menu">
     <li class="menu"><a href="exercises.jsp">Exercises</a></li>
     <li class="menu"><a href="settings.jsp">Settings</a></li>
+    <li id="users"><a href="users.jsp">Users</a></li>
     <li class="menu"><a href="logout.jsp">Logout</a></li>
 </ul>
 <h1>
@@ -60,6 +61,11 @@
         });
     });
 
+    if ('<%=userType%>' == 'student') {
+        document.getElementById("users").className = "hide";
+    } else {
+        document.getElementById("users").className = "menu";
+    }
 </script>
 </body>
 </html>

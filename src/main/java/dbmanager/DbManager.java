@@ -50,6 +50,19 @@ public class DbManager {
         return null;
     }
 
+    public String approveReg(String id) {
+        Connection con = getConnection();
+        String sql = "UPDATE DP_USERS SET status = 1 WHERE user_id = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, Integer.parseInt(id));
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return e.getMessage();
+        }
+        return "OK";
+    }
 
     public String dp_users_insert(String firstname, String lastname, String email, String login, String pass, boolean teacher) {
         Connection con = getConnection();
@@ -72,19 +85,15 @@ public class DbManager {
         return "OK";
     }
 
-    public String dp_users_update(String firstname, String lastname, String pass, String login, Integer status) {
-        if (status == null) {
-            status = 3;
-        }
+    public String dp_users_update(String firstname, String lastname, String pass, String login) {
         Connection con = getConnection();
-        String sql = "UPDATE DP_USERS SET first_name = ?, last_name = ?, password = ?, status = ? WHERE login = ?";
+        String sql = "UPDATE DP_USERS SET first_name = ?, last_name = ?, password = ? WHERE login = ?";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, firstname);
             ps.setString(2, lastname);
             ps.setString(3, pass);
             ps.setString(4, login);
-            ps.setInt(5, status);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -279,14 +288,32 @@ public class DbManager {
             statement.setString(1, login);
             ResultSet rs = statement.executeQuery();
             rs.next();
+            map.put("user_id", Integer.toString(rs.getInt("USER_ID")));
             map.put("first_name", rs.getString("FIRST_NAME"));
+            map.put("login", rs.getString("LOGIN"));
             map.put("last_name", rs.getString("LAST_NAME"));
             map.put("email", rs.getString("EMAIL"));
             map.put("status", Integer.toString(rs.getInt("STATUS")));
+            map.put("teacher", Boolean.toString(rs.getBoolean("TEACHER")));
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return map;
+    }
+
+    public ArrayList<HashMap<String, String>> getAllUsers() {
+        Connection con = getConnection();
+        ArrayList<HashMap<String, String>> ret = new ArrayList<>();
+        try {
+            PreparedStatement statement = con.prepareStatement("SELECT login FROM dp_users");
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                ret.add(getUserData(rs.getString(1)));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ret;
     }
 
     public static void main(String[] args) throws Exception {
