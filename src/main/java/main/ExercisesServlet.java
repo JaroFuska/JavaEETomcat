@@ -17,9 +17,9 @@ import java.util.ArrayList;
 public class ExercisesServlet extends HttpServlet {
     DbManager dbManager = new DbManager();
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String userType = (String) request.getSession().getAttribute("userType");
+        User user = (User) request.getSession().getAttribute("user");
         ArrayList<String> list = new ArrayList<>();
-        if (userType == "teacher") {
+        if (user.isTeacher()) {
             for (int i = 1; i <= dbManager.getExercisesCount(); i++) {
                 list.add(i + "");
             }

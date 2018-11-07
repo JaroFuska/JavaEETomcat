@@ -1,4 +1,5 @@
-<%@ page import="java.io.PrintWriter" %><%--
+<%@ page import="java.io.PrintWriter" %>
+<%@ page import="main.User" %><%--
   Created by IntelliJ IDEA.
   User: jarof
   Date: 21-Mar-18
@@ -7,8 +8,9 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    String userType = (String) request.getSession().getAttribute("userType");
-    if (userType == null) {
+    User user = (User) request.getSession().getAttribute("user");
+    boolean teacher = user.isTeacher();
+    if (user == null) {
         response.sendRedirect("index.jsp");
     }
 %>
@@ -60,7 +62,7 @@
             if (id == "addExercise") {
                 window.location.href = "exercise.jsp?ex=" + (parseInt(ex) + 1).toString();
             } else {
-                if ('<%=userType%>' == 'student') {
+                if (!<%=teacher%>) {
                     $.ajax({
                         url: '/main.java.main.CreateProjectServlet',
                         data: {
@@ -81,7 +83,7 @@
 <div id="exercisesHolder"></div>
 <button class="regular" id="addExercise">Add exercise</button>
 <script>
-    if ('<%=userType%>' == 'student') {
+    if (!<%=teacher%>) {
         document.getElementById('addExercise').style.visibility = 'hidden';
         document.getElementById("users").className = "hide";
     } else {

@@ -1,7 +1,8 @@
 <%@ page import="java.io.PrintWriter" %>
 <%@ page import="dbmanager.DbManager" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="java.util.HashMap" %><%--
+<%@ page import="java.util.HashMap" %>
+<%@ page import="main.User" %><%--
   Created by IntelliJ IDEA.
   User: jarof
   Date: 21-Mar-18
@@ -10,11 +11,12 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    String userType = (String) request.getSession().getAttribute("userType");
-    String userLogin = (String) request.getSession().getAttribute("userLogin");
-    if (userType == null || userType == "student") {
+    User user = (User) request.getSession().getAttribute("user");
+    boolean teacher = user.isTeacher();
+    if (user == null) {
         response.sendRedirect("index.jsp");
     }
+    String login = user.getLogin();
     DbManager db = new DbManager();
     ArrayList<HashMap<String, String>> list = db.getAllUsers();
 %>
@@ -42,7 +44,7 @@
     </tr>
     <%
         for (HashMap<String, String> map : list) {
-            if (((map.get("teacher") == "false" && !userLogin.equals("admin")) || userLogin.equals("admin")) && !map.get("login").equals(userLogin)) {
+            if (((map.get("teacher") == "false" && !login.equals("admin")) || login.equals("admin")) && !map.get("login").equals(login)) {
                 String status;
                 String buttonName;
                 String buttonDisabled = map.get("status").equals("3") ? "false" : "true";
@@ -85,7 +87,7 @@
         </td>
         <script type="text/javascript">
             document.getElementById('<%=map.get("user_id")%>').disabled = ('<%=buttonDisabled%>' == 'true');
-            if ('<%=userLogin%>' == 'admin') {
+            if ('<%=login%>' == 'admin') {
                 document.getElementsByName('<%=map.get("user_id")%>')[0].className = "smallButton";
                 if (map.get("status") == "3") {
                     document.getElementsByName('<%=map.get("user_id")%>')[0].disable = true;

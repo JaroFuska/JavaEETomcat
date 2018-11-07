@@ -1,13 +1,15 @@
 <%@ page import="java.io.File" %>
 <%@ page import="dbmanager.DbManager" %>
+<%@ page import="main.User" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     String root = request.getParameter("root");
-    String userType = (String) request.getSession().getAttribute("userType");
-    String ex = (String) request.getSession().getAttribute("ex");
-    if (userType == null) {
+    User user = (User) request.getSession().getAttribute("user");
+    if (user == null) {
         response.sendRedirect("index.jsp");
     }
+    boolean teacher = user.isTeacher();
+    String ex = (String) request.getSession().getAttribute("ex");
     DbManager db = new DbManager();
     String exerciseDesc = db.getExerciseDesc(ex);
 %>
@@ -187,6 +189,8 @@
                 ctxMenu.style.top = "";
             }, false);
 
+
+
         })
 
 
@@ -276,10 +280,10 @@
 
 </body>
 <script type="text/javascript">
-    if ('<%=userType%>' == 'student') {
-        document.getElementById("users").className = "hide";
-    } else {
+    if (<%=teacher%>) {
         document.getElementById("users").className = "menu";
+    } else {
+        document.getElementById("users").className = "hide";
     }
 </script>
 

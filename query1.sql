@@ -8,7 +8,7 @@ drop table dp_user_files;
 
 drop table dp_exercise_files;
 
-
+select max(exercise_id) from dp_exercise_files
 
 
 CREATE TABLE `DP_USER_FILES` (
@@ -24,6 +24,5 @@ CREATE TABLE `DP_USER_FILES` (
 CREATE TABLE `DP_EXERCISE_FILES` (
 	`EXERCISE_ID` INT NOT NULL,
 	`FILE` blob NOT NULL,
-	`PATH` varchar(511) NOT NULL,
-	`TEXT` varchar(1023) NOT NULL
+	`PATH` varchar(511) NOT NULL
 );

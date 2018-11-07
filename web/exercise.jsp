@@ -1,4 +1,5 @@
-<%@ page import="dbmanager.DbManager" %><%--
+<%@ page import="dbmanager.DbManager" %>
+<%@ page import="main.User" %><%--
   Created by IntelliJ IDEA.
   User: jarof
   Date: 21-Mar-18
@@ -8,13 +9,16 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     String ex = request.getParameter("ex");
-    String userType = (String) request.getSession().getAttribute("userType");
-    if (userType == null) {
+    request.getSession().setAttribute("ex", ex);
+    User user = (User) request.getSession().getAttribute("user");
+    boolean teacher = user.isTeacher();
+    if (user == null) {
         response.sendRedirect("index.jsp");
     }
     DbManager db = new DbManager();
-    String exerciseDesc = db.getExerciseDesc(ex);
-    boolean exerciseVis = db.getExerciseVisibility(ex);
+    boolean newExercise = (Integer.parseInt(ex) > db.getExercisesCount());
+    String exerciseDesc = (newExercise) ? "" : db.getExerciseDesc(ex);
+    boolean exerciseVis = (newExercise) ? false : db.getExerciseVisibility(ex);
 %>
 <html>
 <script src="jquery.fileTree/jquery.js" type="text/javascript"></script>
@@ -61,7 +65,7 @@
         });
     });
 
-    if ('<%=userType%>' == 'student') {
+    if (!<%=teacher%>) {
         document.getElementById("users").className = "hide";
     } else {
         document.getElementById("users").className = "menu";

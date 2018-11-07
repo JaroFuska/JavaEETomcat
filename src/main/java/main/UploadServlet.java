@@ -33,7 +33,7 @@ public class UploadServlet extends HttpServlet {
             if (part != null) {
                 if (part.getName().equals("codes")) {
                     String path = part.getSubmittedFileName();
-                    dbManager.dp_exercise_files_file_insert(exercise, part.getInputStream(), path, text);
+                    dbManager.dp_exercise_files_file_insert(exercise, part.getInputStream(), path);
                 }
             }
         }

@@ -18,11 +18,11 @@ public class UserDataServlet extends HttpServlet {
     DbManager dbManager = new DbManager();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String login = (String) request.getSession().getAttribute("userLogin");
-        HashMap<String, String> map = dbManager.getUserData(login);
-        request.setAttribute("firstname", map.get("first_name"));
-        request.setAttribute("lastname", map.get("last_name"));
-        request.setAttribute("email", map.get("email"));
+        User user = (User) request.getSession().getAttribute("user");
+        String login = user.getLogin();
+        request.setAttribute("firstname", user.getFirst_name());
+        request.setAttribute("lastname", user.getLast_name());
+        request.setAttribute("email", user.getEmail());
         RequestDispatcher rd = request.getRequestDispatcher("settings.jsp");
         rd.forward(request, response);
 
