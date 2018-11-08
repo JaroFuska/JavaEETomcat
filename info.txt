@@ -3,6 +3,18 @@ MySQL port: 3306
 mysqlpass
 
 
+ArangoDB root user password:
+admin
+
+http://127.0.0.1:8529
+
+key: UserID-ExerciseID-Version
+
+
+Couchbase cluster name = DP
+admin
+admin
+
 
 create database DP;
 
@@ -46,3 +58,12 @@ ALTER TABLE `DP_USER_FILES` ADD CONSTRAINT `DP_USER_FILES_fk0` FOREIGN KEY (`USE
 
 ALTER TABLE `DP_USER_FILES` ADD CONSTRAINT `DP_USER_FILES_fk1` FOREIGN KEY (`EXERCISE_ID`) REFERENCES `DP_EXERCISES`(`EXERCISE_ID`);
 
+
+
+OpenShift:
+project name: dpjavatomcat
+
+application name: AgileGuide
+
+
+The username/password for administering your JWS is fXjKyj83/e4qLwak3. For accessing the MySQL database "root" use the credentials userW8F/dxyCVFb3. Please be sure to create the secret named "jws-app-secret" containing the server.crt file used for serving secure content.

@@ -1,23 +1,19 @@
 package dbmanager;
 
+import com.arangodb.internal.util.IOUtils;
+import com.couchbase.client.java.document.JsonDocument;
 import main.User;
+import com.arangodb.entity.BaseDocument;
 
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DbManager {
     private final String DB_URL = "jdbc:mysql://localhost/DP";
-
-    //    private final String DB_URL = "jdbc:sqlite:/DB/DP.db";
-    public enum RegisterState {
-        OK,
-        EMAIL,
-        LOGIN
-    }
-
 
     public Connection getConnection() {
         Connection con = null;
@@ -294,43 +290,94 @@ public class DbManager {
         return ret;
     }
 
-    public String createExercise(int exerciseID, int user_id) throws SQLException, IOException {
-        String mainDir = "";
-        Connection con = getConnection();
-        String sql = "SELECT file, path FROM dp_user_files WHERE exercise_id = ? AND user_id = ? AND version = " +
-                "(SELECT max(version) FROM dp_user_files WHERE exercise_id = ? AND user_id = ?)";
+
+    public String createExercise(int exerciseID, int user_id) throws SQLException {
         Connection conn = getConnection();
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setInt(1, exerciseID);
-        ps.setInt(2, user_id);
-        ps.setInt(3, exerciseID);
-        ps.setInt(4, user_id);
-        ResultSet resultSet = ps.executeQuery();
-        boolean hasPersData = false;
-        while (resultSet.next()) {
-            mainDir = createFile(resultSet, mainDir);
-            hasPersData = true;
-        }
-        if (!hasPersData) {
-            sql = "SELECT file, path FROM dp_exercise_files WHERE exercise_id = ?";
-            ps = conn.prepareStatement(sql);
+        String mainDir = "";
+        try {
+            ArangoDBManager arangoManager = new ArangoDBManager();
+//            CouchbaseDBManager couchDB = new CouchbaseDBManager();
+//            JsonDocument doc = couchDB.walter();
+            String sql = "SELECT max(version) FROM dp_user_files WHERE exercise_id = ? AND user_id = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, exerciseID);
-            resultSet = ps.executeQuery();
-            while (resultSet.next()) {
-                mainDir = createFile(resultSet, mainDir);
-                dp_user_files_insert(user_id, exerciseID, resultSet.getBinaryStream("file"), resultSet.getString("path"), 1);
+            ps.setInt(2, user_id);
+            ResultSet resultSet = ps.executeQuery();
+            int version = 1;
+            resultSet.next();
+            if (resultSet.getInt(1) > 0) {
+//            has own files for exercise
+                version = resultSet.getInt(1);
+                BaseDocument document = arangoManager.getDocument(String.format("%d-%d-%d", user_id, exerciseID, version));
+                if (document == null) {
+//                do not have personal cache
+                    sql = "SELECT file, path FROM dp_user_files WHERE exercise_id = ? AND user_id = ? AND version = ?";
+                    ps = conn.prepareStatement(sql);
+                    ps.setInt(1, exerciseID);
+                    ps.setInt(2, user_id);
+                    ps.setInt(3, version);
+                    resultSet = ps.executeQuery();
+                    BaseDocument newExerciseDocument = new BaseDocument();
+                    newExerciseDocument.setKey(String.format("%d-%d-%d", user_id, exerciseID, version));
+                    while (resultSet.next()) {
+                        String path = resultSet.getString("path");
+                        InputStream is = resultSet.getBinaryStream("file");
+                        mainDir = createFile(path, is, mainDir);
+                        java.sql.Blob ablob = resultSet.getBlob("file");
+                        String str = new String(ablob.getBytes(1l, (int) ablob.length()));
+                        newExerciseDocument.addAttribute(path, str);
+                    }
+                    arangoManager.insertDocument(newExerciseDocument);
+                } else {
+//                have personal cache
+                    for (Map.Entry<String, Object> entry : document.getProperties().entrySet()) {
+                        InputStream is = org.apache.commons.io.IOUtils.toInputStream((String) entry.getValue(), "UTF-8");
+                        mainDir = createFile(entry.getKey(), is, mainDir);
+                    }
+                }
+            } else {
+//            do not have own files for exercise
+                BaseDocument document = arangoManager.getDocument(String.format("%d", exerciseID));
+                if (document == null) {
+//                do not have cache for exercise
+                    sql = "SELECT file, path FROM dp_exercise_files WHERE exercise_id = ?";
+                    ps = conn.prepareStatement(sql);
+                    ps.setInt(1, exerciseID);
+                    resultSet = ps.executeQuery();
+                    BaseDocument newExerciseDocument = new BaseDocument();
+                    newExerciseDocument.setKey(String.valueOf(exerciseID));
+                    while (resultSet.next()) {
+                        String path = resultSet.getString("path");
+                        InputStream is = resultSet.getBinaryStream("file");
+                        mainDir = createFile(path, is, mainDir);
+                        dp_user_files_insert(user_id, exerciseID, is, path, 1);
+                        java.sql.Blob ablob = resultSet.getBlob("file");
+                        String str = new String(ablob.getBytes(1l, (int) ablob.length()));
+                        newExerciseDocument.addAttribute(path, str);
+                    }
+                    arangoManager.insertDocument(newExerciseDocument);
+                } else {
+//                have cache for exercise
+                    for (Map.Entry<String, Object> entry : document.getProperties().entrySet()) {
+                        InputStream is = org.apache.commons.io.IOUtils.toInputStream((String) entry.getValue(), "UTF-8");
+                        mainDir = createFile(entry.getKey(), is, mainDir);
+                        dp_user_files_insert(user_id, exerciseID, is, entry.getKey(), 1);
+                    }
+                }
             }
+        } catch (NoClassDefFoundError e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        con.close();
+        conn.close();
         return mainDir;
     }
 
 
-    private String createFile(ResultSet resultSet, String dir) {
+    private String createFile(String path, InputStream is, String dir) {
         String mainDir = dir;
-        String path = null;
         try {
-            path = resultSet.getString("path");
 
             if (mainDir.equals("")) {
                 mainDir = "/" + (path.startsWith("/") ? path.split("/")[1] : path.split("/")[0]);
@@ -341,13 +388,32 @@ public class DbManager {
             FileOutputStream fos = new FileOutputStream(file);
 
             byte[] buffer = new byte[1];
-            InputStream is = resultSet.getBinaryStream("file");
             while (is.read(buffer) > 0) {
                 fos.write(buffer);
             }
             fos.close();
-        } catch (SQLException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return mainDir;
+    }
+
+    private String createFile(String path, byte[] fileData, String dir) {
+        String mainDir = dir;
+        try {
+
+            if (mainDir.equals("")) {
+                mainDir = "/" + (path.startsWith("/") ? path.split("/")[1] : path.split("/")[0]);
+                new File(mainDir).mkdirs();
+            }
+            new File("/" + path.substring(0, path.lastIndexOf("/"))).mkdirs();
+            File file = new File((path.startsWith("/")) ? path : "/" + path);
+            FileOutputStream fos = new FileOutputStream(file);
+
+            fos.write(fileData);
+            fos.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

@@ -29,6 +29,9 @@ public class LoginServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         User user = dbManager.login(login, pass);
         request.getSession().setAttribute("user", user);
+//        String user = dbManager.login(login, pass);
+//        request.getSession().setAttribute("userType", user);
+//        request.getSession().setAttribute("userLogin", login);
         if (user != null) {
 //            RequestDispatcher rd = request.getRequestDispatcher("main.java.main.ExercisesServlet");
 //            rd.forward(request,response);
