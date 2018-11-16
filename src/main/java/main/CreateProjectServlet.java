@@ -16,7 +16,6 @@ import java.sql.SQLException;
 public class CreateProjectServlet extends HttpServlet {
     DbManager dbManager = new DbManager();
 
-    // TODO: 22-Mar-18 there will be differences when this servlet will be called by student
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         processRequest(request, response);
     }
@@ -27,11 +26,13 @@ public class CreateProjectServlet extends HttpServlet {
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int exerciseID = Integer.parseInt(request.getParameter("ex"));
-        request.getSession().setAttribute("ex", Integer.toString(exerciseID));
         String rootDir =  "";
         User user = (User) request.getSession().getAttribute("user");
+        int version = dbManager.getUserLastVersion(exerciseID, user.getUser_id());
+        request.getSession().setAttribute("ex", Integer.toString(exerciseID));
+        request.getSession().setAttribute("version", Integer.toString(version));
         try {
-            rootDir = dbManager.createExercise(exerciseID, user.getUser_id());
+            rootDir = dbManager.createExercise(exerciseID, user.getUser_id(), version);
         } catch (SQLException e) {
             e.printStackTrace();
         }

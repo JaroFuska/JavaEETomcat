@@ -12,6 +12,7 @@
     String ex = (String) request.getSession().getAttribute("ex");
     DbManager db = new DbManager();
     String exerciseDesc = db.getExerciseDesc(ex);
+    int version = Integer.parseInt((String) request.getSession().getAttribute("version"));
 %>
 <html lang="en">
 <head>
@@ -92,6 +93,11 @@
         }
 
         #runFiles {
+            height: 5%;
+            float: bottom;
+        }
+
+        #createNewProjectVersion {
             height: 5%;
             float: bottom;
         }
@@ -190,7 +196,6 @@
             }, false);
 
 
-
         })
 
 
@@ -232,6 +237,14 @@
                     type: 'POST'
                 });
             }
+            editedFiles.clear();
+        }
+
+        function createNewVersion() {
+            uploadFiles();
+            $.post('/main.java.main.CreateNewVersionServlet', function (data) {
+
+            });
         }
 
         function runFiles() {
@@ -245,6 +258,31 @@
         function showDesc() {
             alert('<%=exerciseDesc%>');
         }
+
+        // $(".menu").click(function(){
+        //     var href = $(this).attr("href");
+        //     uploadFiles();
+        //     window.location.href = href;
+        // });
+
+        window.onbeforeunload = function () {
+            if (editedFiles.size > 0) {
+                uploadFiles();
+                return 'Save your code first';
+            } else {
+                return;
+            }
+        };
+
+        // $(window).bind('beforeunload', function(){
+        //     uploadFiles();
+        //     return 'Are you sure you want to leave?';
+        // });
+
+        // $(window).unload(function(){
+        //     uploadFiles();
+        // });
+
     </script>
 
 
@@ -265,17 +303,23 @@
 <section class="containerC">
     <menu id="ctxMenu">
         <menu id="addFile" title="Add file"></menu>
-        <menu id="addFile1" title="Upload project" onclick="uploadFiles()"></menu>
-        <menu id="addFile2" title="Run project" onclick="runFiles()"></menu>
+        <menu id="uploadProject" title="Upload project" onclick="uploadFiles()"></menu>
+        <menu id="createNewVersion" title="Create new version from this" onclick="createNewVersion()"></menu>
+        <menu id="runProject" title="Run project" onclick="runFiles()"></menu>
     </menu>
     <div id="projectStructure" class="projectStructureC"></div>
 
     <pre id="editor">
         Welcome to code editor!
+
+        Exercise = <%=ex%> version <%=version%>
     </pre>
 </section>
 
 <button class="regular" id="uploadFiles" onclick="uploadFiles()">Upload codes</button>
+<button class="regular" id="createNewProjectVersion" onclick="createNewVersion()">Create version <%=(version + 1)%> from
+    this state
+</button>
 <button class="regular" id="runFiles" onclick="runFiles()">Run codes</button>
 
 </body>

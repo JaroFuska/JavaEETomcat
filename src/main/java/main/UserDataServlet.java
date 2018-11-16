@@ -18,13 +18,13 @@ public class UserDataServlet extends HttpServlet {
     DbManager dbManager = new DbManager();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        User user = (User) request.getSession().getAttribute("user");
-        String login = user.getLogin();
-        request.setAttribute("firstname", user.getFirst_name());
-        request.setAttribute("lastname", user.getLast_name());
-        request.setAttribute("email", user.getEmail());
-        RequestDispatcher rd = request.getRequestDispatcher("settings.jsp");
-        rd.forward(request, response);
+//        User user = (User) request.getSession().getAttribute("user");
+//        String login = user.getLogin();
+//        request.setAttribute("firstname", user.getFirst_name());
+//        request.setAttribute("lastname", user.getLast_name());
+//        request.setAttribute("email", user.getEmail());
+//        RequestDispatcher rd = request.getRequestDispatcher("settings.jsp");
+//        rd.forward(request, response);
 
     }
 

@@ -1,5 +1,6 @@
 package main;
 
+import dbmanager.ArangoDBManager;
 import dbmanager.DbManager;
 
 import javax.servlet.ServletException;
@@ -27,15 +28,22 @@ public class SaveCodeServlet extends HttpServlet {
 
         File file = new File(fileName);
 
-        DbManager db = new DbManager();
-//        TODO check the version with is currently opened
-        db.dp_user_files_update(user.getUser_id(), Integer.parseInt((String) request.getSession().getAttribute("ex")),
-                new FileInputStream(file), fileName, 1);
-
         BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
         writer.write(content);
 
         writer.close();
+        int version = Integer.parseInt((String)request.getSession().getAttribute("version"));
+        int exerciseID = Integer.parseInt((String)request.getSession().getAttribute("ex"));
+
+        ArangoDBManager arangoDB = new ArangoDBManager();
+        String key = arangoDB.getKey(user.getUser_id(), exerciseID, version);
+        arangoDB.updateAttribute(key, ((fileName.startsWith("/")) ? fileName.substring(1) : fileName), content);
+
+
+//        DbManager db = new DbManager();
+//        db.dp_user_files_update(user.getUser_id(), Integer.parseInt((String) request.getSession().getAttribute("ex")),
+//                new FileInputStream(file), fileName, version);
+
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -25,6 +25,34 @@ public class ArangoDBManager {
                 BaseDocument.class);
     }
 
+    public BaseDocument getDocument(int key) {
+        return arangoDB.db(DB).collection(COLLECTION).getDocument(Integer.toString(key),
+                BaseDocument.class);
+    }
+
+    public void updateAttribute(String key, String attribute, String value) {
+        BaseDocument bd = getDocument(key);
+        bd.updateAttribute(attribute, value);
+        updateDocument(key, bd);
+    }
+
+
+    public void updateDocument(String key, BaseDocument doc) {
+        arangoDB.db(DB).collection(COLLECTION).updateDocument(key, doc);
+    }
+
+    public String getKey(int userID, int exerciseID, int version) {
+        return Integer.toString(userID) + "-" + Integer.toString(exerciseID) + "-" + Integer.toString(version);
+    }
+
+
+    public void createNewVersion(String oldKey, String newKey) {
+        BaseDocument doc = getDocument(oldKey);
+        doc.setKey(newKey);
+        insertDocument(doc);
+    }
+
+
     public static void main(String[] args) {
 //        ArangoDBManager dbMan = new ArangoDBManager();
 //        System.out.println();
@@ -48,6 +76,8 @@ public class ArangoDBManager {
 //        ArangoDBManager dbMan = new ArangoDBManager();
 //        dbMan.getDocument("dsadsa");
 //        System.out.println();
+
+
 
     }
 
