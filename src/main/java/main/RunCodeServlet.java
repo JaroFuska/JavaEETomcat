@@ -1,5 +1,8 @@
 package main;
 
+import com.spotify.docker.client.DockerClient;
+import docker.DockerManager;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -18,27 +21,33 @@ public class RunCodeServlet extends HttpServlet {
         String s;
         String ret = "";
         try {
-            Process p = Runtime.getRuntime().exec("python \"" + fileName + "\"");
+//            Process p = Runtime.getRuntime().exec("python \"" + fileName + "\"");
+//
+//            BufferedReader stdInput = new BufferedReader(new
+//                    InputStreamReader(p.getInputStream()));
+//
+//            BufferedReader stdError = new BufferedReader(new
+//                    InputStreamReader(p.getErrorStream()));
+//
+//            // read the output from the command
+//            while ((s = stdInput.readLine()) != null) {
+//                System.out.println(s);
+//                ret += "\n" + s;
+//            }
+//
+//            // read any errors from the attempted command
+//            while ((s = stdError.readLine()) != null) {
+//                System.out.println(s);
+//                ret += "\n" + s;
+//            }
 
-            BufferedReader stdInput = new BufferedReader(new
-                    InputStreamReader(p.getInputStream()));
 
-            BufferedReader stdError = new BufferedReader(new
-                    InputStreamReader(p.getErrorStream()));
+//            DockerManager.buildImage(filename)
+            String imageId = DockerManager.buildImage(fileName.substring(0, fileName.lastIndexOf("/")), "testingimage:latest");
+            String containerId = DockerManager.createContainer(imageId);
+            String execOutput = DockerManager.execStart(containerId, "python -m unittest discover");
 
-            // read the output from the command
-            while ((s = stdInput.readLine()) != null) {
-                System.out.println(s);
-                ret += "\n" + s;
-            }
-
-            // read any errors from the attempted command
-            while ((s = stdError.readLine()) != null) {
-                System.out.println(s);
-                ret += "\n" + s;
-            }
-
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         response.setContentType("text/plain");

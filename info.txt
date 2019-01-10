@@ -1,3 +1,10 @@
+>2800 fileov
+z MySQL 70 sec
+z ArangoDB 45 sec
+
+spravit merge
+
+
 MySQL port: 3306
 
 mysqlpass

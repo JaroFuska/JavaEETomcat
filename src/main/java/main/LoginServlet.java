@@ -1,6 +1,7 @@
 package main;
 
 import dbmanager.DbManager;
+import docker.DockerManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -17,6 +18,14 @@ public class LoginServlet extends HttpServlet {
     DbManager dbManager = new DbManager();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        TODO remove next lines - only for testing
+        String fileName = "/python_docker_test3";
+        String imageId = DockerManager.buildImage(fileName.substring(0, fileName.lastIndexOf("/")), "testingimage:latest");
+        String containerId = DockerManager.createContainer(imageId);
+        String execOutput = DockerManager.execStart(containerId, "python -m unittest discover");
+
+
+
 //        TODO - print message about waiting for approval
         String login = request.getParameter("login");
         String pass = null;
