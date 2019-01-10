@@ -20,7 +20,7 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 //        TODO remove next lines - only for testing
         String fileName = "/python_docker_test3";
-        String imageId = DockerManager.buildImage(fileName.substring(0, fileName.lastIndexOf("/")), "testingimage:latest");
+        String imageId = DockerManager.buildImage(fileName, "testingimage:latest");
         String containerId = DockerManager.createContainer(imageId);
         String execOutput = DockerManager.execStart(containerId, "python -m unittest discover");
 

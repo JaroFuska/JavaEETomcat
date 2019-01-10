@@ -45,7 +45,7 @@ public class RunCodeServlet extends HttpServlet {
 //            DockerManager.buildImage(filename)
             String imageId = DockerManager.buildImage(fileName.substring(0, fileName.lastIndexOf("/")), "testingimage:latest");
             String containerId = DockerManager.createContainer(imageId);
-            String execOutput = DockerManager.execStart(containerId, "python -m unittest discover");
+            ret = DockerManager.execStart(containerId, "python -m unittest discover");
 
         } catch (Exception e) {
             e.printStackTrace();
