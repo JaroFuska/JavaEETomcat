@@ -4,6 +4,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     String root = request.getParameter("root");
+    request.getSession().setAttribute("root", root);
     User user = (User) request.getSession().getAttribute("user");
     if (user == null) {
         response.sendRedirect("index.jsp");
@@ -52,7 +53,8 @@
         }
 
         .containerC {
-            height: 92%;
+            display: none;
+            height: 100%;
             width: 100%;
             margin: auto;
             padding: 5px;
@@ -147,6 +149,7 @@
             content: "\2630";
         }
 
+
     </style>
 
     <script src="jquery.fileTree/jquery.js" type="text/javascript"></script>
@@ -212,8 +215,6 @@
                 folderEvent: 'dblclick'
             }, function (file) {
                 currentFile = file;
-                <%-- TODO save file to map only if it changed and opening a new file --%>
-                // editedFiles.set(file, editor.session.getValue());
                 if (editedFiles.has(file)) {
                     editor.session.setValue(editedFiles.get(file), -1);
                 } else {
@@ -259,12 +260,6 @@
             alert('<%=exerciseDesc%>');
         }
 
-        // $(".menu").click(function(){
-        //     var href = $(this).attr("href");
-        //     uploadFiles();
-        //     window.location.href = href;
-        // });
-
         window.onbeforeunload = function () {
             if (editedFiles.size > 0) {
                 uploadFiles();
@@ -273,16 +268,6 @@
                 return;
             }
         };
-
-        // $(window).bind('beforeunload', function(){
-        //     uploadFiles();
-        //     return 'Are you sure you want to leave?';
-        // });
-
-        // $(window).unload(function(){
-        //     uploadFiles();
-        // });
-
     </script>
 
 
@@ -294,13 +279,15 @@
     <li class="menu"><a href="settings.jsp">Settings</a></li>
     <li class="menu"><a href="logout.jsp">Logout</a></li>
     <li id="users"><a href="users.jsp">Users</a></li>
-    <li class="menu">
-        <button class="menu" id="desc" onclick="showDesc()">Exercise description</button>
-    </li>
 </ul>
 
-<input id="fileName" type="hidden" value=""/>
-<section class="containerC">
+<div class="tab">
+    <button class="tablinks" onclick="managePage(event, 'workflowTab')" id="defaultOpen">Exercise workflow</button>
+    <button class="tablinks" onclick="managePage(event, 'editorTab')">Code editor</button>
+</div>
+
+<section id="editorTab" class="containerC">
+    <input id="fileName" type="hidden" value=""/>
     <menu id="ctxMenu">
         <menu id="addFile" title="Add file"></menu>
         <menu id="uploadProject" title="Upload project" onclick="uploadFiles()"></menu>
@@ -314,16 +301,160 @@
 
         Exercise = <%=ex%> version <%=version%>
     </pre>
+    <button class="regular" id="uploadFiles" onclick="uploadFiles()">Upload codes</button>
+    <button class="regular" id="createNewProjectVersion" onclick="createNewVersion()">Create version <%=(version + 1)%>
+        from
+        this state
+    </button>
+    <button class="regular" id="runFiles" onclick="runFiles()">Run codes</button>
 </section>
 
-<button class="regular" id="uploadFiles" onclick="uploadFiles()">Upload codes</button>
-<button class="regular" id="createNewProjectVersion" onclick="createNewVersion()">Create version <%=(version + 1)%> from
-    this state
-</button>
-<button class="regular" id="runFiles" onclick="runFiles()">Run codes</button>
+<section id="workflowTab" class="containerC">
+    <h1>
+        Exercise ${param.ex} workflow
+    </h1>
+    <h4><%=exerciseDesc%>
+    </h4>
+    <div class="level">
+        <p></p>
+        <input class="tdd_state" id="1:test_failed" type="checkbox" onclick="return false;"/> TEST FAILED <br>
+        <input class="tdd_state" id="2:method_implemented" type="checkbox" onclick="return false;"/> METHOD IMPLEMENTED
+        <br>
+        <input class="tdd_state" id="3:test_passed" type="checkbox" onclick="return false;"/> TEST PASSED <br>
+        <button class="regular" id="tdd_exercise_workflow" onclick="testWorkflow()">New tests implemented</button>
+    </div>
+</section>
+
 
 </body>
 <script type="text/javascript">
+    document.getElementById("defaultOpen").click();
+
+    function managePage(evt, tab) {
+        // Declare all variables
+        var i, tabcontent, tablinks;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("containerC");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(tab).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    var state = 0;
+    //TODO take level from DB
+    var level = 0;
+    showLevel(level);
+
+    function testWorkflow() {
+        switch (state) {
+            case 0:
+                var testResult = '';
+                $.ajax({
+                    url: '/main.java.main.RunCodeServlet',
+                    data: {
+                        fileName: "<%=root%>/tests.py"
+                    },
+                    async: false,
+                    type: 'POST',
+                    success: function (data) {
+                        testResult = data;
+                    }
+                });
+                if (testResult.includes('FAIL')) {
+                    document.getElementById('tdd_exercise_workflow').innerHTML = 'Method implemented';
+                    document.getElementById('1:test_failed').checked = true;
+                    state = 1;
+                } else {
+                    alert('Write some test to method that will fail!');
+                }
+                break;
+            case 1:
+                //check if method was implemented (run his tests) - if did run super tests to test method
+                var testResult = '';
+                $.ajax({
+                    url: '/main.java.main.RunCodeServlet',
+                    data: {
+                        fileName: "<%=root%>/tests.py"
+                    },
+                    async: false,
+                    type: 'POST',
+                    success: function (data) {
+                        testResult = data;
+                    }
+                });
+                if (!testResult.includes('FAIL')) {
+                    //runMasterTestsForThisLevel      TestStringMethods
+                    $.ajax({
+                        url: '/main.java.main.RunCodeServlet',
+                        data: {
+                            //TODO - run different file (masterTest)
+                            fileName: "<%=root%>/tests.py",
+                            level: level
+                        },
+                        async: false,
+                        type: 'POST',
+                        success: function (data) {
+                            if (data == "") {
+                                alert("There is no code yet!");
+                            } else {
+                                testResult = data;
+                            }
+                        }
+                    });
+                    if (!testResult.includes('FAIL')) {
+                        document.getElementById('tdd_exercise_workflow').innerHTML = 'Move to next level';
+                        document.getElementById('2:method_implemented').checked = true;
+                        document.getElementById('3:test_passed').checked = true;
+                        state = 2;
+                    } else {
+                        //local tests passed, master tests don't
+                        alert(testResult);
+                    }
+                } else {
+                    //local test don't pass
+                    alert(testResult);
+                }
+                break;
+            case 2:
+                // Initialize next level
+                level = level + 1;
+                showLevel(level);
+                state = 0;
+                break;
+        }
+    }
+
+    function showLevel(level) {
+        var checkBoxes = document.getElementsByClassName("tdd_state");
+        for (i = 0; i < checkBoxes.length; i++) {
+            checkBoxes[i].checked = false;
+        }
+        //TODO get level description from DB
+        if (level == 0) {
+            var levelDiv = document.getElementsByClassName("level")[0];
+            var descriptionElement = levelDiv.getElementsByTagName("p")[0];
+            descriptionElement.innerHTML = "Uloha 1: Napis metodu \"getLastCharsOfString(inputStirng, numberOfLastChars)\", ktora vrati poslednych \"numberOfLastChars\" stringu \"inputString\"";
+        }
+        if (level == 1) {
+            var levelDiv = document.getElementsByClassName("level")[0];
+            var descriptionElement = levelDiv.getElementsByTagName("p")[0];
+            descriptionElement.innerHTML = "Uloha 2: Napis metodu \"getSuffixAfterChar(inputString, char)\", ktora vrati cast stringu \"inputString\", ktora nasleduje po znaku \"char\"";
+        }
+    //    TODO if there is no more level
+    //    submit my solution
+    }
+
     if (<%=teacher%>) {
         document.getElementById("users").className = "menu";
     } else {

@@ -91,6 +91,13 @@ public class DockerManager {
 //        }
 //    }
 
+    public static String runFile(String file) {
+        String imageId = DockerManager.buildImage(file.substring(0, file.lastIndexOf("/")), "testingimage:latest");
+        String containerId = DockerManager.createContainer(imageId);
+        String ret = DockerManager.execStart(containerId, "python " + file);
+        return ret;
+    }
+
     public List<Container> getContainers() {
         List<Container> ret = null;
         try {

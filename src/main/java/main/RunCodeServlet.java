@@ -18,6 +18,7 @@ public class RunCodeServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String fileName = request.getParameter("fileName");
+        String level = request.getParameter("level");
         String s;
         String ret = "";
         try {
@@ -45,7 +46,12 @@ public class RunCodeServlet extends HttpServlet {
 //            DockerManager.buildImage(filename)
             String imageId = DockerManager.buildImage(fileName.substring(0, fileName.lastIndexOf("/")), "testingimage:latest");
             String containerId = DockerManager.createContainer(imageId);
-            ret = DockerManager.execStart(containerId, "python -m unittest discover");
+            if (level == null) {
+                ret = DockerManager.execStart(containerId, "python " + fileName.substring(fileName.lastIndexOf("/") + 1));
+            } else {
+//                TODO change tests to MasterTests
+                ret = DockerManager.execStart(containerId, "python " + "tests.py TestStringMethods.test_level" + level);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

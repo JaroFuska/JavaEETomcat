@@ -32,7 +32,6 @@
     <li id="users"><a href="users.jsp">Users</a></li>
     <li class="menu"><a href="logout.jsp">Logout</a></li>
 </ul>
-<%--TODO get user information from DB and fill fields--%>
 <form action="main.java.main.RegistrationServlet" method="post" enctype="multipart/form-data">
     First name:<input type="text" name="firstname" value="<%=map.get("first_name")%>" required><br>
     Last name:<input type="text" name="lastname" value="<%=map.get("last_name")%>" required><br>
