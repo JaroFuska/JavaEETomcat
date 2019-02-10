@@ -182,17 +182,18 @@ public class DbManager {
         return "OK";
     }
 
-    public String dp_exercises_insert(int exerciseID, String text, boolean visible) {
+    public String dp_exercises_insert(int exerciseID, String text, boolean visible, InputStream config_file) {
         if (getExercisesCount() >= exerciseID) {
-            return dp_exercises_update(exerciseID, text, visible);
+            return dp_exercises_update(exerciseID, text, visible, config_file);
         } else {
             Connection con = getConnection();
-            String sql = "INSERT INTO dp_exercises (exercise_id, text, visible) VALUES(?, ?, ?)";
+            String sql = "INSERT INTO dp_exercises (exercise_id, text, visible, config_file) VALUES(?, ?, ?, ?)";
             try {
                 PreparedStatement ps = con.prepareStatement(sql);
                 ps.setInt(1, exerciseID);
                 ps.setString(2, text);
                 ps.setBoolean(3, visible);
+                ps.setBlob(4, config_file);
                 ps.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -204,14 +205,15 @@ public class DbManager {
         }
     }
 
-    public String dp_exercises_update(int exerciseID, String text, boolean visible) {
+    public String dp_exercises_update(int exerciseID, String text, boolean visible, InputStream config_file) {
         Connection con = getConnection();
-        String sql = "UPDATE dp_exercises SET text = ?, visible = ? WHERE exercise_id = ?";
+        String sql = "UPDATE dp_exercises SET text = ?, visible = ?, config_file = ? WHERE exercise_id = ?";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, text);
             ps.setBoolean(2, visible);
-            ps.setInt(3, exerciseID);
+            ps.setBlob(3, config_file);
+            ps.setInt(4, exerciseID);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -220,6 +222,24 @@ public class DbManager {
             closeConnection(con);
         }
         return "OK";
+    }
+
+    public String dp_exercises_get_config_file(String exercise_id) {
+        Connection con = getConnection();
+        String ret = "";
+        try {
+            PreparedStatement statement = con.prepareStatement("SELECT CONFIG_FILE FROM dp_exercises WHERE exercise_id = ?");
+            statement.setString(1, exercise_id);
+            ResultSet rs = statement.executeQuery();
+            rs.next();
+            Blob conf_file = rs.getBlob(1);
+            ret = new String(conf_file.getBytes(1l, (int)conf_file.length()));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection(con);
+        }
+        return ret;
     }
 
     public int getExercisesCount() {
@@ -295,8 +315,6 @@ public class DbManager {
         String mainDir = "";
         try {
             ArangoDBManager arangoManager = new ArangoDBManager();
-//            CouchbaseDBManager couchDB = new CouchbaseDBManager();
-//            JsonDocument doc = couchDB.walter();
             String sql;
             PreparedStatement ps;
             ResultSet resultSet;

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<exercise type="TDD" id="4">
+    <levels number="2">
+        <level id="1">
+            <description>Uloha 1: Napis metodu "getLastCharsOfString(inputStirng, numberOfLastChars)", ktora vrati
+                poslednych "numberOfLastChars" stringu "inputString"
+            </description>
+        </level>
+        <level id="2">
+            <description>Uloha 2: Napis metodu "getSuffixAfterChar(inputString, char)", ktora vrati cast stringu "inputString", ktora nasleduje po znaku "char"
+            </description>
+        </level>
+    </levels>
+    <files>
+        <file type="test" name="test.py"/>
+        <file type="master_test" name="masterTest.py"/>
+        <file type="code" name="stringOperations.py"/>
+    </files>
+</exercise>

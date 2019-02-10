@@ -1,6 +1,7 @@
 package main;
 
 import dbmanager.DbManager;
+import org.apache.commons.io.IOUtils;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -25,7 +26,6 @@ public class UploadServlet extends HttpServlet {
         String text = request.getParameter("text");
         boolean visible = ((String) request.getParameter("visible")).equals("on");
 
-        dbManager.dp_exercises_insert(exercise, text, visible);
         dbManager.dp_exercise_files_delete(exercise);
 
         ArrayList<Part> parts = (ArrayList<Part>) request.getParts();
@@ -33,6 +33,9 @@ public class UploadServlet extends HttpServlet {
             if (part != null) {
                 if (part.getName().equals("codes")) {
                     String path = part.getSubmittedFileName();
+                    if (path.substring(path.lastIndexOf("/") + 1).equals("exercise.xml")) {
+                        dbManager.dp_exercises_insert(exercise, text, visible, part.getInputStream());
+                    }
                     dbManager.dp_exercise_files_file_insert(exercise, part.getInputStream(), path);
                 }
             }

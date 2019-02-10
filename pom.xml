@@ -38,7 +38,9 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/lib</outputDirectory>
+                            <outputDirectory>
+                                ${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/lib
+                            </outputDirectory>
                             <overWriteReleases>false</overWriteReleases>
                             <overWriteSnapshots>true</overWriteSnapshots>
                         </configuration>
@@ -186,6 +188,12 @@
         <!--<artifactId>jackson-core</artifactId>-->
         <!--<version>2.9.5</version>-->
         <!--</dependency>-->
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20180130</version>
+        </dependency>
 
 
     </dependencies>

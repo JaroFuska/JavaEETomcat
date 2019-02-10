@@ -53,6 +53,7 @@
           <element id="library" level="project" name="Maven: org.glassfish.jersey.bundles.repackaged:jersey-guava:2.22.2" />
           <element id="library" level="project" name="Maven: org.glassfish.hk2:osgi-resource-locator:1.0.1" />
           <element id="library" level="project" name="Maven: org.glassfish.jersey.ext:jersey-entity-filtering:2.22.2" />
+          <element id="library" level="project" name="Maven: org.json:json:20180130" />
         </element>
       </element>
       <element id="directory" name="META-INF">

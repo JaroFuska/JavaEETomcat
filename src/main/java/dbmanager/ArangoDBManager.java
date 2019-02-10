@@ -16,6 +16,10 @@ public class ArangoDBManager {
         arangoDB.db(DB).collection(COLLECTION).insertDocument(document);
     }
 
+    public void insertExerciseJSON(String xml) {
+
+    }
+
     public void deleteDocument(String key) {
         arangoDB.db(DB).collection(COLLECTION).deleteDocument(key);
     }
