@@ -2,12 +2,12 @@ package main;
 
 import org.w3c.dom.Element;
 
-public class File {
+public class ExerciseFile {
     private final String type;
     private final String name;
     private final boolean visible;
 
-    public File(Element file_element) {
+    public ExerciseFile(Element file_element) {
         type = file_element.getAttribute("type");
         name = file_element.getAttribute("name");
         visible = file_element.getAttribute("visible").equals("true") ? true : false;

@@ -28,8 +28,9 @@ public class CreateProjectServlet extends HttpServlet {
         int exerciseID = Integer.parseInt(request.getParameter("ex"));
         String rootDir =  "";
         User user = (User) request.getSession().getAttribute("user");
-        Exercise exercise = new Exercise(dbManager.dp_exercises_get_config_file(String.valueOf(exerciseID)));
         request.getSession().setAttribute("user", user);
+        Exercise exercise = new Exercise(dbManager.dp_exercises_get_config_file(String.valueOf(exerciseID)));
+        request.getSession().setAttribute("exercise", exercise);
         int version = dbManager.getUserLastVersion(exerciseID, user.getUser_id());
         request.getSession().setAttribute("ex", Integer.toString(exerciseID));
         request.getSession().setAttribute("version", Integer.toString(version));

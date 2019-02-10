@@ -14,6 +14,21 @@ $(window).load(function () {
         }
     });
     editor.on("change", function () {
+        if (currentFile != null) {
+            if (!Object.is(files_types.get(currentFile.substring(currentFile.lastIndexOf('/') + 1)), undefined)) {
+                var currentFileType = files_types.get(currentFile.substring(currentFile.lastIndexOf('/') + 1));
+                if (state == 0) {
+                    if (currentFileType == 'code') {
+                        editor.setReadOnly(true);
+                    } else {
+                        editor.setReadOnly(false);
+                    }
+                } else {
+                    //TODO - set tests read only when editing code and refactoring?
+                    editor.setReadOnly(false);
+                }
+            }
+        }
         editedFiles.set(currentFile, editor.session.getValue());
         // alert(editedFiles.size);
     });
@@ -39,9 +54,6 @@ $(window).load(function () {
 
 
 })
-
-
-
 
 
 function uploadFiles() {
@@ -82,33 +94,14 @@ window.onbeforeunload = function () {
     }
 };
 
-// function managePage(evt, tab) {
-//     // Declare all variables
-//     var i, tabcontent, tablinks;
-//
-//     // Get all elements with class="tabcontent" and hide them
-//     tabcontent = document.getElementsByClassName("containerC");
-//     for (i = 0; i < tabcontent.length; i++) {
-//         tabcontent[i].style.display = "none";
-//     }
-//
-//     // Get all elements with class="tablinks" and remove the class "active"
-//     tablinks = document.getElementsByClassName("tablinks");
-//     for (i = 0; i < tablinks.length; i++) {
-//         tablinks[i].className = tablinks[i].className.replace(" active", "");
-//     }
-//
-//     // Show the current tab, and add an "active" class to the button that opened the tab
-//     document.getElementById(tab).style.display = "block";
-//     evt.currentTarget.className += " active";
-// }
 
 var state = 0;
-//TODO take level from DB
-var level = 0;
+//TODO take level from DB - personalize for student where he ended
+var level = 1;
 showLevel(level);
 
 function testWorkflow(root) {
+    uploadFiles();
     switch (state) {
         case 0:
             var testResult = '';
@@ -220,14 +213,17 @@ function testWorkflow(root) {
 
 function illuminateRed() {
     document.getElementById('stopLight').style.backgroundColor = "red";
+    document.getElementById('stateDesc').innerHTML = 'Red light = write test that does not pass';
 }
 
 function illuminateOrange() {
     document.getElementById('slowLight').style.backgroundColor = "orange";
+    document.getElementById('stateDesc').innerHTML = 'Orange light = refactor your code';
 }
 
 function illuminateGreen() {
     document.getElementById('goLight').style.backgroundColor = "green";
+    document.getElementById('stateDesc').innerHTML = 'Green light = write method';
 }
 
 function clearLights() {
@@ -236,26 +232,5 @@ function clearLights() {
     document.getElementById('goLight').style.backgroundColor = "black";
 }
 
-function showLevel(level) {
-    clearLights();
-    illuminateRed();
-    // clearLights();
-    // var checkBoxes = document.getElementsByClassName("tdd_state");
-    // for (i = 0; i < checkBoxes.length; i++) {
-    //     checkBoxes[i].checked = false;
-    // }
-    //TODO get level description from DB
-    if (level == 0) {
-        var levelDiv = document.getElementsByClassName("level")[0];
-        var descriptionElement = levelDiv.getElementsByTagName("p")[0];
-        descriptionElement.innerHTML = "Uloha 1: Napis metodu \"getLastCharsOfString(inputStirng, numberOfLastChars)\", ktora vrati poslednych \"numberOfLastChars\" stringu \"inputString\"";
-    }
-    if (level == 1) {
-        var levelDiv = document.getElementsByClassName("level")[0];
-        var descriptionElement = levelDiv.getElementsByTagName("p")[0];
-        descriptionElement.innerHTML = "Uloha 2: Napis metodu \"getSuffixAfterChar(inputString, char)\", ktora vrati cast stringu \"inputString\", ktora nasleduje po znaku \"char\"";
-    }
-    //    TODO if there is no more level
-    //    submit my solution
-}
+
 

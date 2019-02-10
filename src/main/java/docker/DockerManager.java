@@ -61,7 +61,6 @@ public class DockerManager {
         LogStream output = null;
         try {
             dockerClient.startContainer(containerId);
-            // Exec command inside running container with attached STDOUT and STDERR
             String[] command = {"sh", "-c", runCommand};
             ExecCreation execCreation = dockerClient.execCreate(
                     containerId, command, DockerClient.ExecCreateParam.attachStdout(),

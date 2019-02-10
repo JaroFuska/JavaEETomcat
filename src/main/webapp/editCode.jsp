@@ -1,11 +1,13 @@
 <%@ page import="java.io.File" %>
 <%@ page import="dbmanager.DbManager" %>
 <%@ page import="main.User" %>
+<%@ page import="main.Exercise" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     String root = request.getParameter("root");
     request.getSession().setAttribute("root", root);
     User user = (User) request.getSession().getAttribute("user");
+    Exercise exercise = (Exercise) request.getSession().getAttribute("exercise");
     if (user == null) {
         response.sendRedirect("index.jsp");
     }
@@ -70,7 +72,7 @@
     </pre>
     <div id="workflowPanel">
         <div>
-            <p id="stateDesc">Red light = write test that does not pass</p>
+            <p id="stateDesc"></p>
         </div>
         <div id="traffic-light">
             <div id="stopLight" class="bulb"></div>
@@ -87,23 +89,6 @@
     </button>
     <button class="regular" id="runFiles" onclick="runFiles()">Run codes</button>
 </section>
-
-<%--<section id="workflowTab" class="containerC">--%>
-<%--<h1>--%>
-<%--Exercise ${param.ex} workflow--%>
-<%--</h1>--%>
-<%--<h4><%=exerciseDesc%>--%>
-<%--</h4>--%>
-<%--<div class="level">--%>
-<%--<p></p>--%>
-<%--<input class="tdd_state" id="1:test_failed" type="checkbox" onclick="return false;"/> TEST FAILED <br>--%>
-<%--<input class="tdd_state" id="2:method_implemented" type="checkbox" onclick="return false;"/> METHOD IMPLEMENTED--%>
-<%--<br>--%>
-<%--<input class="tdd_state" id="3:test_passed" type="checkbox" onclick="return false;"/> TEST PASSED <br>--%>
-<%--<button class="regular" id="tdd_exercise_workflow" onclick="testWorkflow()">New tests implemented</button>--%>
-<%--</div>--%>
-<%--</section>--%>
-
 
 </body>
 <script type="text/javascript">
@@ -135,6 +120,30 @@
             }
         });
     });
+
+    var levelsDesc = [];
+    var files_types = new Map();
+    <%
+    for (int lev : exercise.getLevels().keySet()) { %>
+    levelsDesc[<%=lev%>] = '<%=exercise.getLevels().get(lev)%>';
+    <%
+        }
+        for (String file_name : exercise.getFiles().keySet()) {
+            String type = exercise.getFiles().get(file_name).getType(); %>
+            files_types.set('<%=file_name%>', '<%=type%>');
+    <%
+        }
+    %>
+
+    function showLevel(level) {
+        clearLights();
+        illuminateRed();
+        var levelDiv = document.getElementsByClassName("level")[0];
+        var descriptionElement = levelDiv.getElementsByTagName("p")[0];
+        descriptionElement.innerHTML = levelsDesc[level];
+        //    TODO if there is no more level
+        //    submit my solution
+    }
 </script>
 
 <script src="JS/editCode.js" type="text/javascript" charset="utf-8"></script>

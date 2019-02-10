@@ -11,6 +11,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Exercise {
@@ -18,9 +19,27 @@ public class Exercise {
     private String id;
     private String type;
     private Map<Integer, String> levels;
-    private ArrayList<File> files;
+    private Map<String, ExerciseFile> files;
+
+    public String getId() {
+        return id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public Map<Integer, String> getLevels() {
+        return levels;
+    }
+
+    public Map<String, ExerciseFile> getFiles() {
+        return files;
+    }
 
     public Exercise(String config_file) {
+        levels = new HashMap<>();
+        files = new HashMap<>();
         try {
             Document xmlDoc = loadXMLFromString(config_file);
             Element root = xmlDoc.getDocumentElement();
@@ -29,8 +48,14 @@ public class Exercise {
             NodeList levels_list = root.getElementsByTagName("level");
             for (int i = 0; i < levels_list.getLength(); i++) {
                 Node level = levels_list.item(i);
-                String id = ((Element)level).getAttribute("id");
-                String desc = level.getFirstChild().getTextContent();
+                String level_id = ((Element)level).getAttribute("id");
+                String level_desc = level.getTextContent().trim();
+                levels.put(Integer.parseInt(level_id), level_desc);
+            }
+            NodeList files_list = root.getElementsByTagName("file");
+            for (int i = 0; i < files_list.getLength(); i++) {
+                Element file_element = (Element)files_list.item(i);
+                files.put(file_element.getAttribute("name"), new ExerciseFile(file_element));
             }
         } catch (Exception e) {
             e.printStackTrace();

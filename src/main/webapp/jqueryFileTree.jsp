@@ -1,12 +1,14 @@
 <%@ page
 	import="java.io.File,java.io.FilenameFilter,java.util.Arrays"%>
+<%@ page import="main.Exercise" %>
 <%
 /**
   * jQuery File Tree JSP Connector
   * Version 1.0
   * Copyright 2008 Joshua Gould
   * 21 April 2008
-*/	
+*/
+	Exercise exercise = (Exercise) request.getSession().getAttribute("exercise");
     String dir = request.getParameter("dir");
     if (dir == null) {
     	return;
@@ -38,11 +40,13 @@
 		// All files
 		for (String file : files) {
 		    if (!new File(dir, file).isDirectory()) {
-				int dotIndex = file.lastIndexOf('.');
-				String ext = dotIndex > 0 ? file.substring(dotIndex + 1) : "";
-				out.print("<li class=\"file ext_" + ext + "\"><a href=\"#\" rel=\"" + dir + file + "\">"
-					+ file + "</a></li>");
-		    	}
+				if (exercise.getFiles().get(file) != null && exercise.getFiles().get(file).isVisible()) {
+					int dotIndex = file.lastIndexOf('.');
+					String ext = dotIndex > 0 ? file.substring(dotIndex + 1) : "";
+					out.print("<li class=\"file ext_" + ext + "\"><a href=\"#\" rel=\"" + dir + file + "\">"
+							+ file + "</a></li>");
+				}
+			}
 		}
 		out.print("</ul>");
     }
