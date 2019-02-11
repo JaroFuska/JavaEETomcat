@@ -1,0 +1,17 @@
+Časový plán - vývoj:
+
+17.2.2019 - ukončený vývoj cvičení pre TDD
+3.3.2019  - cvičenie pre legacy code - prvá verzia
+10.3.2019 - ukončený vývoj cvičení pre legacy code
+24.3.2019 - cvičenie pre refactoring - prvá verzia
+31.3.2019 - ukončený vývoj cvičení pre refactoring
+1.4.2019 - 19.4.2019 - bugfixing, nasadenie na server, testing
+
+
+Časový plán - písanie práce:
+17.2.2019 - dopísaná kapitola 4 - prehľad problematiky
+3.3.2019  - kapitola 5 - predchádzajúce riešenia
+17.3.2019 - kapitola 6 - nácrh riešenia
+31.3.2019 - kapitola 7 - implementácia
+10.4.2019 - kapitola 8 - Záver + úpravy
+11.4.2019 - 19.4.2019 - úpravy + tlač
