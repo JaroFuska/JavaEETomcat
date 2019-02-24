@@ -1,6 +1,7 @@
-package main;
+package servlets;
 
 import dbmanager.DbManager;
+import main.MdHash;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -11,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
-@WebServlet(name = "/main.java.main.RegistrationServlet", urlPatterns = {"/main.java.main.RegistrationServlet"})
+@WebServlet(name = "/main.java.servlets.RegistrationServlet", urlPatterns = {"/main.java.servlets.RegistrationServlet"})
 @MultipartConfig
 public class RegistrationServlet extends HttpServlet {
     DbManager dbManager = new DbManager();

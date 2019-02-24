@@ -1,4 +1,4 @@
-package main;
+package servlets;
 
 import dbmanager.DbManager;
 import org.apache.commons.io.IOUtils;
@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-@WebServlet(name = "/main.java.main.UploadServlet", urlPatterns = {"/main.java.main.UploadServlet"})
+@WebServlet(name = "/main.java.servlets.UploadServlet", urlPatterns = {"/main.java.servlets.UploadServlet"})
 @MultipartConfig
 public class UploadServlet extends HttpServlet {
     DbManager dbManager = new DbManager();

@@ -1,4 +1,4 @@
-package main;
+package main.XMLClasses;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -8,9 +8,7 @@ import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.InputStream;
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +16,7 @@ public class Exercise {
 
     private String id;
     private String type;
-    private Map<Integer, String> levels;
+    private Map<Integer, Level> levels;
     private Map<String, ExerciseFile> files;
 
     public String getId() {
@@ -29,7 +27,7 @@ public class Exercise {
         return type;
     }
 
-    public Map<Integer, String> getLevels() {
+    public Map<Integer, Level> getLevels() {
         return levels;
     }
 
@@ -49,8 +47,7 @@ public class Exercise {
             for (int i = 0; i < levels_list.getLength(); i++) {
                 Node level = levels_list.item(i);
                 String level_id = ((Element)level).getAttribute("id");
-                String level_desc = level.getTextContent().trim();
-                levels.put(Integer.parseInt(level_id), level_desc);
+                levels.put(Integer.parseInt(level_id), new Level(type, (Element) level));
             }
             NodeList files_list = root.getElementsByTagName("file");
             for (int i = 0; i < files_list.getLength(); i++) {
@@ -62,6 +59,7 @@ public class Exercise {
         }
 
     }
+
 
     private static Document loadXMLFromString(String xml) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

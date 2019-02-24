@@ -1,7 +1,7 @@
-package main;
+package servlets;
 
-import com.spotify.docker.client.DockerClient;
 import docker.DockerManager;
+import main.User;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -11,41 +11,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 
-@WebServlet(name = "/main.java.main.RunCodeServlet", urlPatterns = {"/main.java.main.RunCodeServlet"})
+@WebServlet(name = "/main.java.servlets.RunCodeServlet", urlPatterns = {"/main.java.servlets.RunCodeServlet"})
 @MultipartConfig
 public class RunCodeServlet extends HttpServlet {
 
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        User user = (User) request.getSession().getAttribute("user");
         String fileName = request.getParameter("fileName");
         String level = request.getParameter("level");
-        String s;
         String ret = "";
+        String containerId = null;
         try {
-//            Process p = Runtime.getRuntime().exec("python \"" + fileName + "\"");
-//
-//            BufferedReader stdInput = new BufferedReader(new
-//                    InputStreamReader(p.getInputStream()));
-//
-//            BufferedReader stdError = new BufferedReader(new
-//                    InputStreamReader(p.getErrorStream()));
-//
-//            // read the output from the command
-//            while ((s = stdInput.readLine()) != null) {
-//                System.out.println(s);
-//                ret += "\n" + s;
-//            }
-//
-//            // read any errors from the attempted command
-//            while ((s = stdError.readLine()) != null) {
-//                System.out.println(s);
-//                ret += "\n" + s;
-//            }
-
-
-//            DockerManager.buildImage(filename)
-            String imageId = DockerManager.buildImage(fileName.substring(0, fileName.lastIndexOf("/")), "testingimage:latest");
-            String containerId = DockerManager.createContainer(imageId);
+            String imageId = DockerManager.buildImage(fileName.substring(0, fileName.lastIndexOf("/")), user.getLogin().toLowerCase() + ":latest"); // TODO latest swap for exercise number
+            containerId = DockerManager.createContainer(imageId);
             if (level == null) {
                 ret = DockerManager.execStart(containerId, "python " + fileName.substring(fileName.lastIndexOf("/") + 1));
             } else {
@@ -55,6 +34,8 @@ public class RunCodeServlet extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            DockerManager.cleanUp(containerId);
         }
         response.setContentType("text/plain");
         response.setCharacterEncoding("UTF-8");

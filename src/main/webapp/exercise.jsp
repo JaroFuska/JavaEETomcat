@@ -36,7 +36,7 @@
 <h1>
     Exercise ${param.ex}
 </h1>
-<form method="post" action="main.java.main.UploadServlet" enctype="multipart/form-data">
+<form method="post" action="main.java.servlets.UploadServlet" enctype="multipart/form-data">
     Exercise description: <textarea name="text" cols="100" rows="10"><%=exerciseDesc%></textarea><br>
     Directory with exercise files:<input type="file" name="codes" webkitdirectory mozdirectory msdirectory odirectory
                                          directory><br>
@@ -50,7 +50,7 @@
     document.getElementById("visible").checked = <%=exerciseVis%>;
     document.getElementById("editCodes").addEventListener("click", function () {
         $.ajax({
-            url: '/main.java.main.CreateProjectServlet',
+            url: '/main.java.servlets.CreateProjectServlet',
             data: {
                 ex: "<%=ex%>"
             },

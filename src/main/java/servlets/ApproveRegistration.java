@@ -1,4 +1,4 @@
-package main;
+package servlets;
 
 import dbmanager.DbManager;
 
@@ -10,17 +10,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "/main.java.main.ChangeStatus", urlPatterns = {"/main.java.main.ChangeStatus"})
+@WebServlet(name = "/main.java.servlets.ApproveRegistration", urlPatterns = {"/main.java.servlets.ApproveRegistration"})
 @MultipartConfig
-public class ChangeStatus extends HttpServlet {
+public class ApproveRegistration extends HttpServlet {
     DbManager dbManager = new DbManager();
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getParameter("id");
-        String status = request.getParameter("status");
-
-        int stat = (Integer.parseInt(status)%2) + 1;
-
-        String ret = dbManager.setStatus(id, stat);
+        String ret = dbManager.approveReg(id);
 
         response.setContentType("text/plain");
         response.setCharacterEncoding("UTF-8");

@@ -1,6 +1,5 @@
-package main;
+package servlets;
 
-import com.google.gson.Gson;
 import dbmanager.DbManager;
 
 import javax.servlet.ServletException;
@@ -10,15 +9,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 
-@WebServlet(name = "/main.java.main.ApproveRegistration", urlPatterns = {"/main.java.main.ApproveRegistration"})
+@WebServlet(name = "/main.java.servlets.ChangeStatusServlet", urlPatterns = {"/main.java.servlets.ChangeStatusServlet"})
 @MultipartConfig
-public class ApproveRegistration extends HttpServlet {
+public class ChangeStatusServlet extends HttpServlet {
     DbManager dbManager = new DbManager();
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getParameter("id");
-        String ret = dbManager.approveReg(id);
+        String status = request.getParameter("status");
+
+        int stat = (Integer.parseInt(status)%2) + 1;
+
+        String ret = dbManager.setStatus(id, stat);
 
         response.setContentType("text/plain");
         response.setCharacterEncoding("UTF-8");

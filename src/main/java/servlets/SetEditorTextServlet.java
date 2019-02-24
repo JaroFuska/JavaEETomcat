@@ -1,4 +1,4 @@
-package main;
+package servlets;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -16,7 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-@WebServlet(name = "/main.java.main.SetEditorTextServlet", urlPatterns = {"/main.java.main.SetEditorTextServlet"})
+@WebServlet(name = "/main.java.servlets.SetEditorTextServlet", urlPatterns = {"/main.java.servlets.SetEditorTextServlet"})
 public class SetEditorTextServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -1,6 +1,6 @@
 <%@ page
 	import="java.io.File,java.io.FilenameFilter,java.util.Arrays"%>
-<%@ page import="main.Exercise" %>
+<%@ page import="main.XMLClasses.Exercise" %>
 <%
 /**
   * jQuery File Tree JSP Connector
@@ -32,7 +32,7 @@
 		out.print("<ul class=\"jqueryFileTree\" style=\"display: none;\">");
 		// All dirs
 		for (String file : files) {
-		    if (new File(dir, file).isDirectory()) {
+		    if (new File(dir, file).isDirectory() && exercise.getFiles().get(file).isVisible()) {
 				out.print("<li class=\"directory collapsed\"><a href=\"#\" rel=\"" + dir + file + "/\">"
 					+ file + "</a></li>");
 		    }

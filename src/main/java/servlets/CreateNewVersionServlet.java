@@ -1,7 +1,8 @@
-package main;
+package servlets;
 
 import dbmanager.ArangoDBManager;
 import dbmanager.DbManager;
+import main.User;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -11,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 
-@WebServlet(name = "/main.java.main.CreateNewVersionServlet", urlPatterns = {"/main.java.main.CreateNewVersionServlet"})
+@WebServlet(name = "/main.java.servlets.CreateNewVersionServlet", urlPatterns = {"/main.java.servlets.CreateNewVersionServlet"})
 @MultipartConfig
 public class CreateNewVersionServlet extends HttpServlet {
 

@@ -26,20 +26,18 @@
             $.ajax
             ({
                 type: 'post',
-                url: '/main.java.main.LoginServlet',
+                url: '/main.java.servlets.LoginServlet',
                 data: {
                     login: login,
                     password: pass
                 },
                 success: function (response) {
-                    // alert(response);
                     if (response=='fail') {
                         //TODO - print message
                         alert("Wrong Details");
                     }
                     else {
                         window.location.href = "exercises.jsp";
-                        // $.post('/main.java.main.ExercisesServlet');
                     }
                 }
             });
@@ -54,7 +52,6 @@
     }
 </script>
 
-<%--<form action="main.java.main.LoginServlet" method="post" enctype="multipart/form-data">--%>
 <form method="post" action="LoginServlet" onsubmit="return loginFunc();">
     <div class="container">
         <label for="login"><b>Username</b></label>

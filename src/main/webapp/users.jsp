@@ -119,7 +119,7 @@
         if (type == 'submit') {
             if (target.parentNode.id != 'activation') {
                 $.ajax({
-                    url: '/main.java.main.ApproveRegistration',
+                    url: '/main.java.servlets.ApproveRegistration',
                     data: {
                         id: id
                     },
@@ -130,7 +130,7 @@
                 });
             } else {
                 $.ajax({
-                    url: '/main.java.main.ChangeStatus',
+                    url: '/main.java.servlets.ChangeStatusServlet',
                     data: {
                         id: name,
                         status: value

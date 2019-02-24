@@ -22,7 +22,7 @@
         window.location.href = "index.jsp";
     }
 </script>
-<form action="/main.java.main.RegistrationServlet" method="post" enctype="multipart/form-data">
+<form action="/main.java.servlets.RegistrationServlet" method="post" enctype="multipart/form-data">
     First name:<input type="text" name="firstname" required><br>
     Last name:<input type="text" name="lastname" required><br>
     Email:<input type="text" name="email" required><br>

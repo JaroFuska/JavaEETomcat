@@ -1,7 +1,7 @@
 <%@ page import="java.io.File" %>
 <%@ page import="dbmanager.DbManager" %>
 <%@ page import="main.User" %>
-<%@ page import="main.Exercise" %>
+<%@ page import="main.XMLClasses.Exercise" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     String root = request.getParameter("root");
@@ -114,7 +114,7 @@
                 editor.session.setValue(editedFiles.get(file), -1);
             } else {
                 document.getElementById("fileName").value = file;
-                $.post('/main.java.main.SetEditorTextServlet?fileName=' + file, function (data) {
+                $.post('/main.java.servlets.SetEditorTextServlet?fileName=' + file, function (data) {
                     editor.session.setValue(data, -1);
                 });
             }
@@ -125,7 +125,7 @@
     var files_types = new Map();
     <%
     for (int lev : exercise.getLevels().keySet()) { %>
-    levelsDesc[<%=lev%>] = '<%=exercise.getLevels().get(lev)%>';
+    levelsDesc[<%=lev%>] = '<%=exercise.getLevels().get(lev).getDescription()%>';
     <%
         }
         for (String file_name : exercise.getFiles().keySet()) {

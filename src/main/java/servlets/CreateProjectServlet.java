@@ -1,6 +1,8 @@
-package main;
+package servlets;
 
 import dbmanager.DbManager;
+import main.User;
+import main.XMLClasses.Exercise;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -11,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.sql.SQLException;
 
-@WebServlet(name = "/main.java.main.CreateProjectServlet", urlPatterns = {"/main.java.main.CreateProjectServlet"})
+@WebServlet(name = "/main.java.servlets.CreateProjectServlet", urlPatterns = {"/main.java.servlets.CreateProjectServlet"})
 @MultipartConfig
 public class CreateProjectServlet extends HttpServlet {
     DbManager dbManager = new DbManager();

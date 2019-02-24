@@ -59,7 +59,7 @@ $(window).load(function () {
 function uploadFiles() {
     for (let [key, value] of editedFiles) {
         $.ajax({
-            url: '/main.java.main.SaveCodeServlet',
+            url: '/main.java.servlets.SaveCodeServlet',
             data: {
                 key: key,
                 value: value
@@ -72,7 +72,7 @@ function uploadFiles() {
 
 function createNewVersion() {
     uploadFiles();
-    $.post('/main.java.main.CreateNewVersionServlet', function (data) {
+    $.post('/main.java.servlets.CreateNewVersionServlet', function (data) {
 
     });
 }
@@ -80,7 +80,7 @@ function createNewVersion() {
 function runFiles() {
     uploadFiles();
     //TODO - find main method and run that file
-    $.post('/main.java.main.RunCodeServlet?fileName=' + currentFile, function (data) {
+    $.post('/main.java.servlets.RunCodeServlet?fileName=' + currentFile, function (data) {
         alert(data);
     });
 }
@@ -106,7 +106,7 @@ function testWorkflow(root) {
         case 0:
             var testResult = '';
             $.ajax({
-                url: '/main.java.main.RunCodeServlet',
+                url: '/main.java.servlets.RunCodeServlet',
                 data: {
                     fileName: root + "/tests.py"
                 },
@@ -129,7 +129,7 @@ function testWorkflow(root) {
             //check if method was implemented (run his tests) - if did run super tests to test method
             var testResult = '';
             $.ajax({
-                url: '/main.java.main.RunCodeServlet',
+                url: '/main.java.servlets.RunCodeServlet',
                 data: {
                     fileName: root + "/tests.py"
                 },
@@ -142,7 +142,7 @@ function testWorkflow(root) {
             if (!testResult.includes('FAIL')) {
                 //runMasterTestsForThisLevel      TestStringMethods
                 $.ajax({
-                    url: '/main.java.main.RunCodeServlet',
+                    url: '/main.java.servlets.RunCodeServlet',
                     data: {
                         //TODO - run different file (masterTest)
                         fileName: root + "/tests.py",
@@ -176,7 +176,7 @@ function testWorkflow(root) {
         case 2:
             // Refactoring
             $.ajax({
-                url: '/main.java.main.RunCodeServlet',
+                url: '/main.java.servlets.RunCodeServlet',
                 data: {
                     //TODO - run different file (masterTest)
                     fileName: root + "/tests.py",

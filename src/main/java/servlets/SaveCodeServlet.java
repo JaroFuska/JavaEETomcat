@@ -1,7 +1,8 @@
-package main;
+package servlets;
 
 import dbmanager.ArangoDBManager;
 import dbmanager.DbManager;
+import main.User;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -16,7 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@WebServlet(name = "/main.java.main.SaveCodeServlet", urlPatterns = {"/main.java.main.SaveCodeServlet"})
+@WebServlet(name = "/main.java.servlets.SaveCodeServlet", urlPatterns = {"/main.java.servlets.SaveCodeServlet"})
 @MultipartConfig
 public class SaveCodeServlet extends HttpServlet {
 
@@ -25,8 +26,6 @@ public class SaveCodeServlet extends HttpServlet {
         String content = request.getParameter("value");
 
         User user = (User) request.getSession().getAttribute("user");
-
-        File file = new File(fileName);
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
         writer.write(content);
@@ -38,11 +37,6 @@ public class SaveCodeServlet extends HttpServlet {
         ArangoDBManager arangoDB = new ArangoDBManager();
         String key = arangoDB.getKey(user.getUser_id(), exerciseID, version);
         arangoDB.updateAttribute(key, ((fileName.startsWith("/")) ? fileName.substring(1) : fileName), content);
-
-
-//        DbManager db = new DbManager();
-//        db.dp_user_files_update(user.getUser_id(), Integer.parseInt((String) request.getSession().getAttribute("ex")),
-//                new FileInputStream(file), fileName, version);
 
     }
 

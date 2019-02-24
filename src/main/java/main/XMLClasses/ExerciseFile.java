@@ -1,4 +1,4 @@
-package main;
+package main.XMLClasses;
 
 import org.w3c.dom.Element;
 

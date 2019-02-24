@@ -30,7 +30,7 @@
 </body>
 <script type="text/javascript">
     var ex;
-    $.post('/main.java.main.ExercisesServlet', function (data) {
+    $.post('/main.java.servlets.ExercisesServlet', function (data) {
         // ex = data;
         var i = 0;
         $.each(JSON.parse(data), function(index, item) {
@@ -64,7 +64,7 @@
             } else {
                 if (!<%=teacher%>) {
                     $.ajax({
-                        url: '/main.java.main.CreateProjectServlet',
+                        url: '/main.java.servlets.CreateProjectServlet',
                         data: {
                             ex: id
                         },

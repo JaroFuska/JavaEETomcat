@@ -5,7 +5,6 @@ import java.security.NoSuchAlgorithmException;
 
 public class MdHash {
     public String getHashPass(String password) throws NoSuchAlgorithmException {
-        String hashpass;
         String plainText = password;
         MessageDigest mdAlgorithm = MessageDigest.getInstance("MD5");
         mdAlgorithm.update(plainText.getBytes());
@@ -15,15 +14,11 @@ public class MdHash {
 
         for (int i = 0; i < digest.length; i++) {
             plainText = Integer.toHexString(0xFF & digest[i]);
-
             if (plainText.length() < 2) {
                 plainText = "0" + plainText;
             }
-
             hexString.append(plainText);
         }
-        hashpass = hexString.toString();
-
-        return hashpass;
+        return hexString.toString();
     }
 }

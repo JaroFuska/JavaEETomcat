@@ -1,7 +1,9 @@
-package main;
+package servlets;
 
 import dbmanager.DbManager;
 import docker.DockerManager;
+import main.MdHash;
+import main.User;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -12,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
-@WebServlet(name = "/main.java.main.LoginServlet", urlPatterns = {"/main.java.main.LoginServlet"})
+@WebServlet(name = "/main.java.servlets.LoginServlet", urlPatterns = {"/main.java.servlets.LoginServlet"})
 @MultipartConfig
 public class LoginServlet extends HttpServlet {
     DbManager dbManager = new DbManager();
@@ -30,12 +32,7 @@ public class LoginServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         User user = dbManager.login(login, pass);
         request.getSession().setAttribute("user", user);
-//        String user = dbManager.login(login, pass);
-//        request.getSession().setAttribute("userType", user);
-//        request.getSession().setAttribute("userLogin", login);
         if (user != null) {
-//            RequestDispatcher rd = request.getRequestDispatcher("main.java.main.ExercisesServlet");
-//            rd.forward(request,response);
             response.getWriter().write("success");
         } else {
             response.getWriter().write("fail");
