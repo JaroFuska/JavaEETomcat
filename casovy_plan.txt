@@ -9,9 +9,9 @@
 
 
 Časový plán - písanie práce:
-17.2.2019 - dopísaná kapitola 4 - prehľad problematiky
-3.3.2019  - kapitola 5 - predchádzajúce riešenia
-17.3.2019 - kapitola 6 - nácrh riešenia
-31.3.2019 - kapitola 7 - implementácia
-10.4.2019 - kapitola 8 - Záver + úpravy
+17.2.2019 - dopísaná kapitola 4 - prehľad problematiky - cca 15 strán
+3.3.2019  - kapitola 5 - predchádzajúce riešenia - cca 5 strán
+17.3.2019 - kapitola 6 - návrh riešenia - cca 20 strán
+31.3.2019 - kapitola 7 - implementácia - cca - 20 strán
+10.4.2019 - kapitola 8 - Záver + úpravy - cca 5 strán
 11.4.2019 - 19.4.2019 - úpravy + tlač
