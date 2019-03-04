@@ -24,7 +24,6 @@ $(window).load(function () {
                         editor.setReadOnly(false);
                     }
                 } else {
-                    //TODO - set tests read only when editing code and refactoring?
                     editor.setReadOnly(false);
                 }
             }
@@ -95,10 +94,7 @@ window.onbeforeunload = function () {
 };
 
 
-var state = 0;
-//TODO take level from DB - personalize for student where he ended
-var level = 1;
-showLevel(level);
+
 
 function testWorkflow(root) {
     uploadFiles();
@@ -108,7 +104,8 @@ function testWorkflow(root) {
             $.ajax({
                 url: '/main.java.servlets.RunCodeServlet',
                 data: {
-                    fileName: root + "/tests.py"
+                    fileName: root,
+                    testType: "test"
                 },
                 async: false,
                 type: 'POST',
@@ -118,7 +115,6 @@ function testWorkflow(root) {
             });
             if (testResult.includes('FAIL')) {
                 document.getElementById('tdd_exercise_workflow').innerHTML = 'Method implemented';
-                // document.getElementById('1:test_failed').checked = true;
                 illuminateGreen();
                 state = 1;
             } else {
@@ -126,12 +122,13 @@ function testWorkflow(root) {
             }
             break;
         case 1:
-            //check if method was implemented (run his tests) - if did run super tests to test method
+            //check if method was implemented (run his tests) - if did, run super tests to test method
             var testResult = '';
             $.ajax({
                 url: '/main.java.servlets.RunCodeServlet',
                 data: {
-                    fileName: root + "/tests.py"
+                    fileName: root,
+                    testType: "test"
                 },
                 async: false,
                 type: 'POST',
@@ -144,8 +141,8 @@ function testWorkflow(root) {
                 $.ajax({
                     url: '/main.java.servlets.RunCodeServlet',
                     data: {
-                        //TODO - run different file (masterTest)
-                        fileName: root + "/tests.py",
+                        fileName: root,
+                        testType: "master_test",
                         level: level
                     },
                     async: false,
@@ -178,8 +175,8 @@ function testWorkflow(root) {
             $.ajax({
                 url: '/main.java.servlets.RunCodeServlet',
                 data: {
-                    //TODO - run different file (masterTest)
-                    fileName: root + "/tests.py",
+                    fileName: root,
+                    testType: "both",
                     level: level
                 },
                 async: false,
@@ -194,8 +191,6 @@ function testWorkflow(root) {
             });
             if (!testResult.includes('FAIL')) {
                 document.getElementById('tdd_exercise_workflow').innerHTML = 'Move to next level';
-                // document.getElementById('2:method_implemented').checked = true;
-                // document.getElementById('3:test_passed').checked = true;
                 state = 3;
             } else {
                 // master tests don't pass
@@ -205,7 +200,8 @@ function testWorkflow(root) {
         case 3:
             // Initialize next level
             level = level + 1;
-            showLevel(level);
+            showTDDLevel(level);
+            document.getElementById('tdd_exercise_workflow').innerHTML = 'New tests implemented';
             state = 0;
             break;
     }
@@ -216,14 +212,17 @@ function illuminateRed() {
     document.getElementById('stateDesc').innerHTML = 'Red light = write test that does not pass';
 }
 
-function illuminateOrange() {
-    document.getElementById('slowLight').style.backgroundColor = "orange";
-    document.getElementById('stateDesc').innerHTML = 'Orange light = refactor your code';
+function illuminateGreen() {
+    document.getElementById('stopLight').style.backgroundColor = "#660000";
+    document.getElementById('goLight').style.backgroundColor = "#00e600";
+    document.getElementById('stateDesc').innerHTML = 'Green light = write method';
 }
 
-function illuminateGreen() {
-    document.getElementById('goLight').style.backgroundColor = "green";
-    document.getElementById('stateDesc').innerHTML = 'Green light = write method';
+function illuminateOrange() {
+    document.getElementById('stopLight').style.backgroundColor = "#660000";
+    document.getElementById('goLight').style.backgroundColor = "#145214";
+    document.getElementById('slowLight').style.backgroundColor = "orange";
+    document.getElementById('stateDesc').innerHTML = 'Orange light = refactor your code';
 }
 
 function clearLights() {

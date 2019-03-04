@@ -2,6 +2,8 @@ package servlets;
 
 import docker.DockerManager;
 import main.User;
+import main.XMLClasses.Exercise;
+import main.XMLClasses.ExerciseFile;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -19,17 +21,36 @@ public class RunCodeServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         User user = (User) request.getSession().getAttribute("user");
         String fileName = request.getParameter("fileName");
+        String testType = request.getParameter("testType");
         String level = request.getParameter("level");
+        Exercise exercise = (Exercise) request.getSession().getAttribute("exercise");
         String ret = "";
         String containerId = null;
         try {
-            String imageId = DockerManager.buildImage(fileName.substring(0, fileName.lastIndexOf("/")), user.getLogin().toLowerCase() + ":latest"); // TODO latest swap for exercise number
+            String imageName = user.getLogin().toLowerCase() + ":" + exercise.getId();
+            String imageId = DockerManager.buildImage(fileName, imageName);
             containerId = DockerManager.createContainer(imageId);
-            if (level == null) {
-                ret = DockerManager.execStart(containerId, "python " + fileName.substring(fileName.lastIndexOf("/") + 1));
-            } else {
-//                TODO change tests to MasterTests
-                ret = DockerManager.execStart(containerId, "python " + "tests.py TestStringMethods.test_level" + level);
+            if (exercise.getType().toUpperCase().equals("TDD")) {
+                if (testType.equals("test")) {
+                    ExerciseFile userTest = exercise.getUserTest();
+                    ret = DockerManager.execStart(containerId, String.format("%s %s", exercise.getLanguage(), userTest.getName()));
+                } else if (testType.equals("master_test")) {
+                    ExerciseFile masterTest = exercise.getMasterTest();
+                    ret = DockerManager.execStart(containerId, String.format("%s %s Level%s", exercise.getLanguage(), masterTest.getName(), level));
+                } else if (testType.equals("both")) {
+                    ExerciseFile masterTest = exercise.getMasterTest();
+                    ret = "Master tests:" +
+                            "\n-----------------------------------------------------------";
+                    ret += DockerManager.execStart(containerId, String.format("%s %s Level%s", exercise.getLanguage(), masterTest.getName(), level));
+                    DockerManager.cleanUp(containerId);
+                    containerId = DockerManager.createContainer(imageId);
+                    ExerciseFile userTest = exercise.getUserTest();
+                    ret += "User tests:" +
+                            "\n-----------------------------------------------------------";
+                    ret += DockerManager.execStart(containerId, String.format("%s %s", exercise.getLanguage(), userTest.getName()));
+                }
+            } else if (exercise.getType().toUpperCase().contains("LEGACY")) {
+
             }
 
         } catch (Exception e) {

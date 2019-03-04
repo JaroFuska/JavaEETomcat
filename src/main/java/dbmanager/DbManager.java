@@ -182,6 +182,22 @@ public class DbManager {
         return "OK";
     }
 
+    public String dp_user_files_delete(int exerciseID) {
+        Connection con = getConnection();
+        String sql = "DELETE FROM dp_user_files WHERE exercise_id = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, exerciseID);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return e.getMessage();
+        } finally {
+            closeConnection(con);
+        }
+        return "OK";
+    }
+
     public String dp_exercises_insert(int exerciseID, String text, boolean visible, InputStream config_file) {
         if (getExercisesCount() >= exerciseID) {
             return dp_exercises_update(exerciseID, text, visible, config_file);
@@ -524,7 +540,6 @@ public class DbManager {
             ps.setInt(3, user_id);
             ps.setInt(4, exercise_id);
             ps.setInt(5, version);
-            System.out.println(ps.executeUpdate());
         } catch (SQLException e) {
             e.printStackTrace();
             return e.getMessage();

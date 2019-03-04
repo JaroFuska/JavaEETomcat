@@ -1,6 +1,8 @@
 package servlets;
 
+import dbmanager.ArangoDBManager;
 import dbmanager.DbManager;
+import main.User;
 import org.apache.commons.io.IOUtils;
 
 import javax.servlet.RequestDispatcher;
@@ -20,13 +22,15 @@ import java.util.ArrayList;
 public class UploadServlet extends HttpServlet {
     DbManager dbManager = new DbManager();
 
-    // TODO: 22-Mar-18 there will be differences when this servlet will be called by student
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int exercise = Integer.parseInt(request.getParameter("ex"));
         String text = request.getParameter("text");
         boolean visible = ((String) request.getParameter("visible")).equals("on");
 
         dbManager.dp_exercise_files_delete(exercise);
+        dbManager.dp_user_files_delete(exercise);
+        ArangoDBManager arangoDBManager = new ArangoDBManager();
+        arangoDBManager.deleteExerciseDocuments(String.valueOf(exercise));
 
         ArrayList<Part> parts = (ArrayList<Part>) request.getParts();
         for (Part part : parts) {

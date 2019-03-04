@@ -18,6 +18,40 @@ public class Exercise {
     private String type;
     private Map<Integer, Level> levels;
     private Map<String, ExerciseFile> files;
+    private String language;
+
+    public Exercise(String config_file) {
+        levels = new HashMap<>();
+        files = new HashMap<>();
+        try {
+            Document xmlDoc = loadXMLFromString(config_file);
+            Element root = xmlDoc.getDocumentElement();
+            id = root.getAttribute("id");
+            type = root.getAttribute("type");
+            language = root.getAttribute("language");
+            NodeList levels_list = root.getElementsByTagName("level");
+            for (int i = 0; i < levels_list.getLength(); i++) {
+                Node level = levels_list.item(i);
+                String level_id = ((Element) level).getAttribute("id");
+                levels.put(Integer.parseInt(level_id), new Level(type, (Element) level));
+            }
+            NodeList files_list = root.getElementsByTagName("file");
+            for (int i = 0; i < files_list.getLength(); i++) {
+                Element file_element = (Element) files_list.item(i);
+                files.put(file_element.getAttribute("name"), new ExerciseFile(file_element));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private static Document loadXMLFromString(String xml) throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        InputSource is = new InputSource(new StringReader(xml));
+        return builder.parse(is);
+    }
 
     public String getId() {
         return id;
@@ -35,37 +69,24 @@ public class Exercise {
         return files;
     }
 
-    public Exercise(String config_file) {
-        levels = new HashMap<>();
-        files = new HashMap<>();
-        try {
-            Document xmlDoc = loadXMLFromString(config_file);
-            Element root = xmlDoc.getDocumentElement();
-            id = root.getAttribute("id");
-            type = root.getAttribute("type");
-            NodeList levels_list = root.getElementsByTagName("level");
-            for (int i = 0; i < levels_list.getLength(); i++) {
-                Node level = levels_list.item(i);
-                String level_id = ((Element)level).getAttribute("id");
-                levels.put(Integer.parseInt(level_id), new Level(type, (Element) level));
-            }
-            NodeList files_list = root.getElementsByTagName("file");
-            for (int i = 0; i < files_list.getLength(); i++) {
-                Element file_element = (Element)files_list.item(i);
-                files.put(file_element.getAttribute("name"), new ExerciseFile(file_element));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public String getLanguage() { return language; }
 
+    public ExerciseFile getMasterTest() {
+        for (ExerciseFile ef : files.values()) {
+            if (ef.isMasterTest()) {
+                return ef;
+            }
+        }
+        return null;
     }
 
-
-    private static Document loadXMLFromString(String xml) throws Exception {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        InputSource is = new InputSource(new StringReader(xml));
-        return builder.parse(is);
+    public ExerciseFile getUserTest() {
+        for (ExerciseFile ef : files.values()) {
+            if (ef.isUserTest()) {
+                return ef;
+            }
+        }
+        return null;
     }
 
     public static void main(String[] args) {

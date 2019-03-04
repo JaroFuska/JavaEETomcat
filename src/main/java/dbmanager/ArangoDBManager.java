@@ -1,7 +1,12 @@
 package dbmanager;
 
+import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDB;
+import com.arangodb.ArangoDBException;
 import com.arangodb.entity.BaseDocument;
+import com.arangodb.util.MapBuilder;
+
+import java.util.Map;
 
 public class ArangoDBManager {
     private final ArangoDB arangoDB;
@@ -16,12 +21,23 @@ public class ArangoDBManager {
         arangoDB.db(DB).collection(COLLECTION).insertDocument(document);
     }
 
-    public void insertExerciseJSON(String xml) {
-
-    }
-
     public void deleteDocument(String key) {
         arangoDB.db(DB).collection(COLLECTION).deleteDocument(key);
+    }
+
+
+    public void deleteExerciseDocuments(String exerciseID) {
+        try {
+            String query = "FOR t IN user_exercise_files FILTER t._key like @key OR t._key == @ex RETURN t";
+            Map<String, Object> bindVars = new MapBuilder().put("key", "%-" + exerciseID + "-%").put("ex", exerciseID).get();
+            ArangoCursor<BaseDocument> cursor = arangoDB.db(DB).query(query, bindVars, null,
+                    BaseDocument.class);
+            cursor.forEachRemaining(aDocument -> {
+                deleteDocument(aDocument.getKey());
+            });
+        } catch (ArangoDBException e) {
+            System.err.println("Failed to execute query. " + e.getMessage());
+        }
     }
 
     public BaseDocument getDocument(String key) {
@@ -80,7 +96,6 @@ public class ArangoDBManager {
 //        ArangoDBManager dbMan = new ArangoDBManager();
 //        dbMan.getDocument("dsadsa");
 //        System.out.println();
-
 
 
     }

@@ -15,6 +15,9 @@
     String ex = (String) request.getSession().getAttribute("ex");
     DbManager db = new DbManager();
     String exerciseDesc = db.getExerciseDesc(ex);
+    if (exercise.getType().toUpperCase().contains("LEGACY")) {
+        exerciseDesc = "Exercise " + ex + " - " + exerciseDesc;
+    }
     int version = Integer.parseInt((String) request.getSession().getAttribute("version"));
 %>
 <html lang="en">
@@ -48,7 +51,7 @@
 <%--</div>--%>
 
 <div class="level">
-    <h1>
+    <h1 id="exerciseHeader">
         Exercise <%=ex%>
     </h1>
     <h4><%=exerciseDesc%>
@@ -123,19 +126,35 @@
 
     var levelsDesc = [];
     var files_types = new Map();
+    var exerciseType = '<%=exercise.getType()%>';
     <%
     for (int lev : exercise.getLevels().keySet()) { %>
-    levelsDesc[<%=lev%>] = '<%=exercise.getLevels().get(lev).getDescription()%>';
+        levelsDesc[<%=lev%>] = '<%=exercise.getLevels().get(lev).getDescription()%>';
     <%
-        }
-        for (String file_name : exercise.getFiles().keySet()) {
-            String type = exercise.getFiles().get(file_name).getType(); %>
-            files_types.set('<%=file_name%>', '<%=type%>');
+    }
+    for (String file_name : exercise.getFiles().keySet()) {
+        String type = exercise.getFiles().get(file_name).getType(); %>
+        files_types.set('<%=file_name%>', '<%=type%>');
     <%
-        }
+    }
     %>
+</script>
+<script src="JS/editCode.js" type="text/javascript" charset="utf-8"></script>
 
-    function showLevel(level) {
+<script type="text/javascript">
+    var state = 0;
+    //TODO take level from DB - personalize for student where he ended
+    var level = 1;
+    if (exerciseType != 'TDD') {
+        document.getElementById('workflowPanel').style.display = 'none';
+        document.getElementById('exerciseHeader').style.display = 'none';
+        document.getElementById('editor').style.width = "80%";
+
+    } else {
+        showTDDLevel(level);
+    }
+
+    function showTDDLevel(level) {
         clearLights();
         illuminateRed();
         var levelDiv = document.getElementsByClassName("level")[0];
@@ -144,9 +163,18 @@
         //    TODO if there is no more level
         //    submit my solution
     }
+
+    function showLegacyCodeLevel(level) {
+        var levelDiv = document.getElementsByClassName("level")[0];
+        var descriptionElement = levelDiv.getElementsByTagName("p")[0];
+        descriptionElement.innerHTML = levelsDesc[level];
+        //TODO  show some stage panel
+        //    TODO if there is no more level
+        //    submit my solution
+    }
+
 </script>
 
-<script src="JS/editCode.js" type="text/javascript" charset="utf-8"></script>
 </html>
 
 
