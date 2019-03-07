@@ -25,6 +25,7 @@
     <title>Code editor</title>
     <link rel="stylesheet" type="text/css" href="/CSS/main.css">
     <link rel="stylesheet" type="text/css" href="/CSS/editCode.css">
+    <link rel="stylesheet" type="text/css" href="/CSS/loading-bar.css">
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 
 
@@ -33,7 +34,6 @@
     <script src="jquery.fileTree/jqueryFileTree.js" type="text/javascript"></script>
     <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
     <link href="jquery.fileTree/jqueryFileTree.css" rel="stylesheet" type="text/css" media="screen"/>
-
 
 </head>
 
@@ -58,6 +58,22 @@
     </h4>
     <p></p><br>
 </div>
+
+<div id="leg_code_container">
+    <ol class="progtrckr" data-progtrckr-steps="6">
+        <li id="pb1" class="progtrckr-now">Documentation</li>
+        <li id="pb2" class="progtrckr-todo">Tests</li>
+        <li id="pb3" class="progtrckr-todo">Implementation</li>
+        <li id="pb4" class="progtrckr-todo">Refactoring</li>
+        <li id="pb5" class="progtrckr-todo">Documentation</li>
+        <li id="pb6" class="progtrckr-todo">Tests</li>
+    </ol>
+
+
+    <p id="leg_code_step_desc">Write documentation for methods that will be affected by change</p>
+    <button class="regular" id="legacy_code_step" onclick="showLCStep()">Next step</button>
+</div>
+
 
 <section id="editorTab" class="containerC">
     <input id="fileName" type="hidden" value=""/>
@@ -95,10 +111,13 @@
 
 </body>
 <script type="text/javascript">
+    function elementByID(elementID) {
+        return document.getElementById(elementID);
+    }
     if (<%=teacher%>) {
-        document.getElementById("users").className = "menu";
+        elementByID("users").className = "menu";
     } else {
-        document.getElementById("users").className = "hide";
+        elementByID("users").className = "hide";
     }
     $(document).ready(function () {
         $('#projectStructure').fileTree({
@@ -116,7 +135,7 @@
             if (editedFiles.has(file)) {
                 editor.session.setValue(editedFiles.get(file), -1);
             } else {
-                document.getElementById("fileName").value = file;
+                elementByID("fileName").value = file;
                 $.post('/main.java.servlets.SetEditorTextServlet?fileName=' + file, function (data) {
                     editor.session.setValue(data, -1);
                 });
@@ -142,16 +161,21 @@
 <script src="JS/editCode.js" type="text/javascript" charset="utf-8"></script>
 
 <script type="text/javascript">
-    var state = 0;
+    var step = 1;
     //TODO take level from DB - personalize for student where he ended
     var level = 1;
     if (exerciseType != 'TDD') {
-        document.getElementById('workflowPanel').style.display = 'none';
-        document.getElementById('exerciseHeader').style.display = 'none';
-        document.getElementById('editor').style.width = "80%";
+        elementByID('workflowPanel').style.display = 'none';
+        elementByID('exerciseHeader').style.display = 'none';
+        elementByID('editor').style.width = "80%";
+        if (exerciseType == 'LEGACY_CODE') {
+            // showLCStep();
+        }
 
-    } else {
+    }
+    if (exerciseType == 'TDD') {
         showTDDLevel(level);
+        document.getElementById('leg_code_container').style.display = 'none';
     }
 
     function showTDDLevel(level) {
@@ -168,10 +192,62 @@
         var levelDiv = document.getElementsByClassName("level")[0];
         var descriptionElement = levelDiv.getElementsByTagName("p")[0];
         descriptionElement.innerHTML = levelsDesc[level];
+        step = 1;
         //TODO  show some stage panel
         //    TODO if there is no more level
         //    submit my solution
     }
+
+    function showLCStep() {
+        switch (step) {
+            case 1:
+                elementByID('pb1').className = "progtrckr-done";
+                elementByID('pb2').className = "progtrckr-now";
+                elementByID('leg_code_step_desc').innerHTML = 'Implement tests for methods that will be affected by change';
+                elementByID('legacy_code_step').innerHTML = "Next step";
+                break;
+            case 2:
+                elementByID('pb2').className = "progtrckr-done";
+                elementByID('pb3').className = "progtrckr-now";
+                elementByID('leg_code_step_desc').innerHTML = 'Implement recommended changes to code';
+                break;
+            case 3:
+                elementByID('pb3').className = "progtrckr-done";
+                elementByID('pb4').className = "progtrckr-now";
+                elementByID('leg_code_step_desc').innerHTML = 'Code refactoring';
+                break;
+            case 4:
+                elementByID('pb4').className = "progtrckr-done";
+                elementByID('pb5').className = "progtrckr-now";
+                elementByID('leg_code_step_desc').innerHTML = 'Write documentation for methods that you implemented';
+                break;
+            case 5:
+                elementByID('pb5').className = "progtrckr-done";
+                elementByID('pb6').className = "progtrckr-now";
+                elementByID('leg_code_step_desc').innerHTML = 'Write tests for methods that you implemented';
+                break;
+            case 6:
+                elementByID('leg_code_step_desc').innerHTML = 'Well done! Now you can move to next level';
+                elementByID('pb6').className = "progtrckr-done";
+                elementByID('legacy_code_step').innerHTML = "Next level";
+                break;
+            case 7:
+                step = 0;
+                elementByID('pb1').className = "progtrckr-now";
+                elementByID('pb2').className = "progtrckr-todo";
+                elementByID('pb3').className = "progtrckr-todo";
+                elementByID('pb4').className = "progtrckr-todo";
+                elementByID('pb5').className = "progtrckr-todo";
+                elementByID('pb6').className = "progtrckr-todo";
+                elementByID('leg_code_step_desc').innerHTML = 'Write documentation for methods that will be affected by change';
+                //TODO - show next level description
+                break;
+        }
+        step++;
+
+    }
+
+
 
 </script>
 
