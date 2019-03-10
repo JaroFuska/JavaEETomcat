@@ -66,7 +66,7 @@ public class DockerManager {
                     containerId, command, DockerClient.ExecCreateParam.attachStdout(),
                     DockerClient.ExecCreateParam.attachStderr(),
                     DockerClient.ExecCreateParam.tty());
-            System.out.println(execCreation.id());
+//            System.out.println(execCreation.id());
             output = dockerClient.execStart(execCreation.id());
         } catch (Exception e) {
             e.printStackTrace();

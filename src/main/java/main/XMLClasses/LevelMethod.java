@@ -2,13 +2,13 @@ package main.XMLClasses;
 
 import org.w3c.dom.Element;
 
-public class LevelTest {
+public class LevelMethod {
     private final String name;
     private final String type;
 
-    public LevelTest(Element test_element) {
-        name = test_element.getAttribute("name");
-        type = test_element.getAttribute("type");
+    public LevelMethod(Element method_element) {
+        name = method_element.getAttribute("name");
+        type = method_element.getAttribute("type");
     }
 
     public String getName() {

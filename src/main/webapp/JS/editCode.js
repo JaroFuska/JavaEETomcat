@@ -1,6 +1,7 @@
 var editor;
 var editedFiles = new Map();
 var currentFile = null;
+var state = 0;
 $(window).load(function () {
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/twilight");
@@ -17,7 +18,7 @@ $(window).load(function () {
         if (currentFile != null) {
             if (!Object.is(files_types.get(currentFile.substring(currentFile.lastIndexOf('/') + 1)), undefined)) {
                 var currentFileType = files_types.get(currentFile.substring(currentFile.lastIndexOf('/') + 1));
-                if (state == 0) {
+                if ((exerciseType == 'TDD' && state == 0) || (exerciseType == 'LEGACY_CODE' && step == 2)) {
                     if (currentFileType == 'code') {
                         editor.setReadOnly(true);
                     } else {
@@ -82,6 +83,7 @@ function runFiles() {
     $.post('/main.java.servlets.RunCodeServlet?fileName=' + currentFile, function (data) {
         alert(data);
     });
+
 }
 
 window.onbeforeunload = function () {
@@ -94,15 +96,13 @@ window.onbeforeunload = function () {
 };
 
 
-
-
 function testWorkflow(root) {
     uploadFiles();
     switch (state) {
         case 0:
             var testResult = '';
             $.ajax({
-                url: '/main.java.servlets.RunCodeServlet',
+                url: '/main.java.servlets.RunCodeServletTDD',
                 data: {
                     fileName: root,
                     testType: "test"
@@ -125,7 +125,7 @@ function testWorkflow(root) {
             //check if method was implemented (run his tests) - if did, run super tests to test method
             var testResult = '';
             $.ajax({
-                url: '/main.java.servlets.RunCodeServlet',
+                url: '/main.java.servlets.RunCodeServletTDD',
                 data: {
                     fileName: root,
                     testType: "test"
@@ -139,7 +139,7 @@ function testWorkflow(root) {
             if (!testResult.includes('FAIL')) {
                 //runMasterTestsForThisLevel      TestStringMethods
                 $.ajax({
-                    url: '/main.java.servlets.RunCodeServlet',
+                    url: '/main.java.servlets.RunCodeServletTDD',
                     data: {
                         fileName: root,
                         testType: "master_test",
@@ -173,7 +173,7 @@ function testWorkflow(root) {
         case 2:
             // Refactoring
             $.ajax({
-                url: '/main.java.servlets.RunCodeServlet',
+                url: '/main.java.servlets.RunCodeServletTDD',
                 data: {
                     fileName: root,
                     testType: "both",

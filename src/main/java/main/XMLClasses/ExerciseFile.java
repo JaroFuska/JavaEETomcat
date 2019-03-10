@@ -24,6 +24,10 @@ public class ExerciseFile {
         return name;
     }
 
+    public String getNameWithoutFileType() {
+        return name.substring(0, name.lastIndexOf("."));
+    }
+
     public boolean isVisible() {
         return visible;
     }
@@ -34,5 +38,9 @@ public class ExerciseFile {
 
     public boolean isUserTest() {
         return type.equals("test");
+    }
+
+    public boolean isCode() {
+        return type.equals("code");
     }
 }

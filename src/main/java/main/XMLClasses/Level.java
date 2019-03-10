@@ -8,25 +8,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Level {
-    private final List<LevelTest> tests;
+    private final List<LevelMethod> methods;
     private final String description;
     private final String id;
 
     public Level(String exercise_type, Element level_element) {
         id = level_element.getAttribute("id");
         description= level_element.getTextContent().trim();
-        tests = new ArrayList<>();
+        methods = new ArrayList<>();
         if (exercise_type.equals("LEGACY_CODE")) {
-            NodeList test_list = level_element.getElementsByTagName("test");
+            NodeList test_list = level_element.getElementsByTagName("method");
             for (int i = 0; i < test_list.getLength(); i++) {
                 Node test = test_list.item(i);
-                tests.add(new LevelTest((Element) test));
+                methods.add(new LevelMethod((Element) test));
             }
         }
     }
 
-    public List<LevelTest> getTests() {
-        return tests;
+    public List<LevelMethod> getMethods() {
+        return methods;
     }
 
     public String getDescription() {

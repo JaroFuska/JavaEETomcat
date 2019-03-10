@@ -89,6 +89,14 @@ public class Exercise {
         return null;
     }
 
+    public Level getLevel(int level) {
+        return levels.get(level);
+    }
+
+    public Level getLevel(String level) {
+        return levels.get(Integer.parseInt(level));
+    }
+
     public static void main(String[] args) {
         String xmlFile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "\n" +

@@ -71,7 +71,7 @@
 
 
     <p id="leg_code_step_desc">Write documentation for methods that will be affected by change</p>
-    <button class="regular" id="legacy_code_step" onclick="showLCStep()">Next step</button>
+    <button class="regular" id="legacy_code_step" onclick="showLCStep('<%=root%>')">Next step</button>
 </div>
 
 
@@ -198,38 +198,130 @@
         //    submit my solution
     }
 
-    function showLCStep() {
+    function showLCStep(root) {
+        uploadFiles();
         switch (step) {
             case 1:
-                elementByID('pb1').className = "progtrckr-done";
-                elementByID('pb2').className = "progtrckr-now";
-                elementByID('leg_code_step_desc').innerHTML = 'Implement tests for methods that will be affected by change';
-                elementByID('legacy_code_step').innerHTML = "Next step";
+                //Documentation for former methods
+                $.ajax({
+                    url: '/main.java.servlets.CheckDocServlet',
+                    data: {
+                        fileName: root,
+                        level: level,
+                        step: step
+                    },
+                    async: false,
+                    type: 'POST',
+                    success: function (data) {
+                        if (data != "OK") {
+                            alert(data);
+                        } else {
+                            elementByID('pb1').className = "progtrckr-done";
+                            elementByID('pb2').className = "progtrckr-now";
+                            elementByID('leg_code_step_desc').innerHTML = 'Implement tests for methods that will be affected by change';
+                            elementByID('legacy_code_step').innerHTML = "Next step";
+                            step++;
+                        }
+                    }
+                });
                 break;
             case 2:
-                elementByID('pb2').className = "progtrckr-done";
-                elementByID('pb3').className = "progtrckr-now";
-                elementByID('leg_code_step_desc').innerHTML = 'Implement recommended changes to code';
+                //Tests for former methods
+                $.ajax({
+                    url: '/main.java.servlets.RunCodeServletLegacy',
+                    data: {
+                        fileName: root,
+                        level: level,
+                        step: step
+                    },
+                    async: false,
+                    type: 'POST',
+                    success: function (data) {
+                        if (data != "OK") {
+                            alert(data);
+                        } else {
+                            elementByID('pb2').className = "progtrckr-done";
+                            elementByID('pb3').className = "progtrckr-now";
+                            elementByID('leg_code_step_desc').innerHTML = 'Implement recommended changes to code';
+                            step++;
+                        }
+                    }
+                });
                 break;
             case 3:
-                elementByID('pb3').className = "progtrckr-done";
-                elementByID('pb4').className = "progtrckr-now";
-                elementByID('leg_code_step_desc').innerHTML = 'Code refactoring';
+                //Implementation of new method
+                $.ajax({
+                    url: '/main.java.servlets.RunCodeServletLegacy',
+                    data: {
+                        fileName: root,
+                        level: level,
+                        step: step
+                    },
+                    async: false,
+                    type: 'POST',
+                    success: function (data) {
+                        if (data.includes("FAIL")) {
+                            alert(data);
+                        } else {
+                            elementByID('pb3').className = "progtrckr-done";
+                            elementByID('pb4').className = "progtrckr-now";
+                            elementByID('leg_code_step_desc').innerHTML = 'Code refactoring';
+                            step++;
+                        }
+                    }
+                });
                 break;
             case 4:
-                elementByID('pb4').className = "progtrckr-done";
-                elementByID('pb5').className = "progtrckr-now";
-                elementByID('leg_code_step_desc').innerHTML = 'Write documentation for methods that you implemented';
+                //Refactoring
+                $.ajax({
+                    url: '/main.java.servlets.RunCodeServletLegacy',
+                    data: {
+                        fileName: root,
+                        level: level,
+                        step: step
+                    },
+                    async: false,
+                    type: 'POST',
+                    success: function (data) {
+                        if (data.includes("FAIL")) {
+                            alert(data);
+                        } else {
+                            elementByID('pb4').className = "progtrckr-done";
+                            elementByID('pb5').className = "progtrckr-now";
+                            elementByID('leg_code_step_desc').innerHTML = 'Write documentation for methods that you implemented';
+                            step++;
+                        }
+                    }
+                });
                 break;
             case 5:
-                elementByID('pb5').className = "progtrckr-done";
-                elementByID('pb6').className = "progtrckr-now";
-                elementByID('leg_code_step_desc').innerHTML = 'Write tests for methods that you implemented';
+                //Documentation of new method
+                $.ajax({
+                    url: '/main.java.servlets.CheckDocServlet',
+                    data: {
+                        fileName: root,
+                        level: level,
+                        step: step
+                    },
+                    async: false,
+                    type: 'POST',
+                    success: function (data) {
+                        if (data != "OK") {
+                            alert(data);
+                        } else {
+                            elementByID('pb5').className = "progtrckr-done";
+                            elementByID('pb6').className = "progtrckr-now";
+                            elementByID('leg_code_step_desc').innerHTML = 'Write tests for methods that you implemented';
+                            step++;
+                        }
+                    }
+                });
                 break;
             case 6:
                 elementByID('leg_code_step_desc').innerHTML = 'Well done! Now you can move to next level';
                 elementByID('pb6').className = "progtrckr-done";
                 elementByID('legacy_code_step').innerHTML = "Next level";
+                step++;
                 break;
             case 7:
                 step = 0;
@@ -241,9 +333,10 @@
                 elementByID('pb6').className = "progtrckr-todo";
                 elementByID('leg_code_step_desc').innerHTML = 'Write documentation for methods that will be affected by change';
                 //TODO - show next level description
+                level++;
+                step++;
                 break;
         }
-        step++;
 
     }
 

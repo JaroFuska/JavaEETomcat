@@ -13,9 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 
-@WebServlet(name = "/main.java.servlets.RunCodeServlet", urlPatterns = {"/main.java.servlets.RunCodeServlet"})
+@WebServlet(name = "/main.java.servlets.RunCodeServletTDD", urlPatterns = {"/main.java.servlets.RunCodeServletTDD"})
 @MultipartConfig
-public class RunCodeServlet extends HttpServlet {
+public class RunCodeServletTDD extends HttpServlet {
 
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -49,8 +49,6 @@ public class RunCodeServlet extends HttpServlet {
                             "\n-----------------------------------------------------------";
                     ret += DockerManager.execStart(containerId, String.format("%s %s", exercise.getLanguage(), userTest.getName()));
                 }
-            } else if (exercise.getType().toUpperCase().contains("LEGACY")) {
-
             }
 
         } catch (Exception e) {
