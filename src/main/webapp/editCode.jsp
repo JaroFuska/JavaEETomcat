@@ -318,10 +318,27 @@
                 });
                 break;
             case 6:
-                elementByID('leg_code_step_desc').innerHTML = 'Well done! Now you can move to next level';
-                elementByID('pb6').className = "progtrckr-done";
-                elementByID('legacy_code_step').innerHTML = "Next level";
-                step++;
+                //Tests for new methods
+                $.ajax({
+                    url: '/main.java.servlets.RunCodeServletLegacy',
+                    data: {
+                        fileName: root,
+                        level: level,
+                        step: step
+                    },
+                    async: false,
+                    type: 'POST',
+                    success: function (data) {
+                        if (data != "OK") {
+                            alert(data);
+                        } else {
+                            elementByID('leg_code_step_desc').innerHTML = 'Well done! Now you can move to next level';
+                            elementByID('pb6').className = "progtrckr-done";
+                            elementByID('legacy_code_step').innerHTML = "Next level";
+                            step++;
+                        }
+                    }
+                });
                 break;
             case 7:
                 step = 0;
