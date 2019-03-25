@@ -48,7 +48,6 @@ public class RunCodeServletLegacy extends HttpServlet {
                         String[] split = ret.split("\n");
                         ret = split[split.length - 1];
                     }
-                    System.out.println(ret);
                 }
                 if (step.equals("3")) {
                     ExerciseFile masterTest = exercise.getMasterTest();

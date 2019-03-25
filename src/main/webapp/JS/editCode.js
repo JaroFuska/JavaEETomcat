@@ -79,10 +79,10 @@ function createNewVersion() {
 
 function runFiles() {
     uploadFiles();
-    //TODO - find main method and run that file
-    $.post('/main.java.servlets.RunCodeServlet?fileName=' + currentFile, function (data) {
-        alert(data);
-    });
+    //TODO - run some general run servlet (not implemented yet)
+    // $.post('/main.java.servlets.RunCodeServlet?fileName=' + currentFile, function (data) {
+    //     alert(data);
+    // });
 
 }
 
@@ -115,7 +115,7 @@ function testWorkflow(root) {
             });
             if (testResult.includes('FAIL')) {
                 document.getElementById('tdd_exercise_workflow').innerHTML = 'Method implemented';
-                illuminateGreen();
+                illuminateRed();
                 state = 1;
             } else {
                 alert('Write some test to method that will fail!');
@@ -159,7 +159,7 @@ function testWorkflow(root) {
                     document.getElementById('tdd_exercise_workflow').innerHTML = 'Done refactoring';
                     // document.getElementById('2:method_implemented').checked = true;
                     // document.getElementById('3:test_passed').checked = true;
-                    illuminateOrange();
+                    illuminateGreen();
                     state = 2;
                 } else {
                     //local tests passed, master tests don't
@@ -191,6 +191,7 @@ function testWorkflow(root) {
             });
             if (!testResult.includes('FAIL')) {
                 document.getElementById('tdd_exercise_workflow').innerHTML = 'Move to next level';
+                illuminateOrange();
                 state = 3;
             } else {
                 // master tests don't pass
@@ -209,26 +210,27 @@ function testWorkflow(root) {
 
 function illuminateRed() {
     document.getElementById('stopLight').style.backgroundColor = "red";
-    document.getElementById('stateDesc').innerHTML = 'Red light = write test that does not pass';
+    document.getElementById('stateDesc').innerHTML = 'Write code that will pass through tests';
 }
 
 function illuminateGreen() {
     document.getElementById('stopLight').style.backgroundColor = "#660000";
     document.getElementById('goLight').style.backgroundColor = "#00e600";
-    document.getElementById('stateDesc').innerHTML = 'Green light = write method';
+    document.getElementById('stateDesc').innerHTML = 'Refactor your code without changing functionality';
 }
 
 function illuminateOrange() {
     document.getElementById('stopLight').style.backgroundColor = "#660000";
     document.getElementById('goLight').style.backgroundColor = "#145214";
     document.getElementById('slowLight').style.backgroundColor = "orange";
-    document.getElementById('stateDesc').innerHTML = 'Orange light = refactor your code';
+    document.getElementById('stateDesc').innerHTML = 'Now you can move to next level';
 }
 
 function clearLights() {
     document.getElementById('stopLight').style.backgroundColor = "black";
     document.getElementById('slowLight').style.backgroundColor = "black";
     document.getElementById('goLight').style.backgroundColor = "black";
+    document.getElementById('stateDesc').innerHTML = 'Write test that will fail';
 }
 
 

@@ -2,6 +2,7 @@
 <%@ page import="dbmanager.DbManager" %>
 <%@ page import="main.User" %>
 <%@ page import="main.XMLClasses.Exercise" %>
+<%@ page import="java.util.Map" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     String root = request.getParameter("root");
@@ -15,7 +16,7 @@
     String ex = (String) request.getSession().getAttribute("ex");
     DbManager db = new DbManager();
     String exerciseDesc = db.getExerciseDesc(ex);
-    if (exercise.getType().toUpperCase().contains("LEGACY")) {
+    if (exercise.getType().toUpperCase().contains("LEGACY") || exercise.getType().toUpperCase().contains("REFACTOR")) {
         exerciseDesc = "Exercise " + ex + " - " + exerciseDesc;
     }
     int version = Integer.parseInt((String) request.getSession().getAttribute("version"));
@@ -60,8 +61,9 @@
 </div>
 
 <div id="leg_code_container">
-    <ol class="progtrckr" data-progtrckr-steps="6">
-        <li id="pb1" class="progtrckr-now">Documentation</li>
+    <ol class="progtrckr" data-progtrckr-steps="7">
+        <li id="pb0" class="progtrckr-now">Know your enemy</li>
+        <li id="pb1" class="progtrckr-todo">Documentation</li>
         <li id="pb2" class="progtrckr-todo">Tests</li>
         <li id="pb3" class="progtrckr-todo">Implementation</li>
         <li id="pb4" class="progtrckr-todo">Refactoring</li>
@@ -70,8 +72,17 @@
     </ol>
 
 
-    <p id="leg_code_step_desc">Write documentation for methods that will be affected by change</p>
+    <p id="leg_code_step_desc">Find methods that will be affected by change (used/modified...)</p>
     <button class="regular" id="legacy_code_step" onclick="showLCStep('<%=root%>')">Next step</button>
+</div>
+
+<div id="refactoring_container">
+    <ol id="refactoring_prog_bar" class="progtrckr" data-progtrckr-steps="0">
+    </ol>
+
+
+    <p id="refactoring_step_desc"></p>
+    <button class="regular" id="refactoring_step" onclick="showRefactorStep('<%=root%>')">Next step</button>
 </div>
 
 
@@ -114,6 +125,7 @@
     function elementByID(elementID) {
         return document.getElementById(elementID);
     }
+
     if (<%=teacher%>) {
         elementByID("users").className = "menu";
     } else {
@@ -144,11 +156,12 @@
     });
 
     var levelsDesc = [];
+    var stepsDesc = new Map();
     var files_types = new Map();
     var exerciseType = '<%=exercise.getType()%>';
     <%
     for (int lev : exercise.getLevels().keySet()) { %>
-        levelsDesc[<%=lev%>] = '<%=exercise.getLevels().get(lev).getDescription()%>';
+    levelsDesc[<%=lev%>] = '<%=exercise.getLevels().get(lev).getDescription()%>';
     <%
     }
     for (String file_name : exercise.getFiles().keySet()) {
@@ -156,12 +169,24 @@
         files_types.set('<%=file_name%>', '<%=type%>');
     <%
     }
+    if (exercise.getType().toUpperCase().contains("REFACTOR")) {
+        for (int lev : exercise.getLevels().keySet()) { %>
+    var descriptions = new Map(); <%
+            for (Map.Entry<Integer, String> entry : exercise.getLevel(lev).getStepsDesc().entrySet()) {%>
+    descriptions.set(<%=entry.getKey()%>, '<%=entry.getValue()%>');
+    <%
+            } %>
+                stepsDesc.set(<%=lev%>, descriptions);
+    <%
+        }
+    }
     %>
 </script>
 <script src="JS/editCode.js" type="text/javascript" charset="utf-8"></script>
 
 <script type="text/javascript">
-    var step = 1;
+    var step = 0;
+    var refSteps = 0;
     //TODO take level from DB - personalize for student where he ended
     var level = 1;
     if (exerciseType != 'TDD') {
@@ -171,6 +196,9 @@
         if (exerciseType == 'LEGACY_CODE') {
             // showLCStep();
         }
+        if (exerciseType == 'REFACTORING') {
+            step = 1;
+        }
 
     }
     if (exerciseType == 'TDD') {
@@ -178,9 +206,13 @@
         document.getElementById('leg_code_container').style.display = 'none';
     }
 
+    if (exerciseType == 'REFACTORING') {
+        showRefactoringLevel(level);
+        document.getElementById('leg_code_container').style.display = 'none';
+    }
+
     function showTDDLevel(level) {
         clearLights();
-        illuminateRed();
         var levelDiv = document.getElementsByClassName("level")[0];
         var descriptionElement = levelDiv.getElementsByTagName("p")[0];
         descriptionElement.innerHTML = levelsDesc[level];
@@ -188,19 +220,102 @@
         //    submit my solution
     }
 
-    function showLegacyCodeLevel(level) {
+    function showLCLevel(level) {
+        var levelDiv = document.getElementsByClassName("level")[0];
+        var descriptionElement = levelDiv.getElementsByTagName("p")[0];
+        descriptionElement.innerHTML = levelsDesc[level];
+        step = 0;
+        //    TODO if there is no more level
+        //    submit my solution
+    }
+
+    function showRefactoringLevel(level) {
         var levelDiv = document.getElementsByClassName("level")[0];
         var descriptionElement = levelDiv.getElementsByTagName("p")[0];
         descriptionElement.innerHTML = levelsDesc[level];
         step = 1;
-        //TODO  show some stage panel
+        var olElem = elementByID('refactoring_prog_bar');
+        while (olElem.hasChildNodes()) {
+            olElem.removeChild(olElem.firstChild);
+        }
+        var i;
+        for (i = 1; i < stepsDesc.get(level).size + 1; i++) {
+            var liElem = document.createElement("LI");
+            liElem.className = 'progtrckr-todo';
+            liElem.id = 'refStep' + i;
+            liElem.innerHTML = 'Step ' + i;
+            olElem.appendChild(liElem);
+        }
+        i--;
+        refSteps = i;
+        elementByID("refactoring_prog_bar").setAttribute('data-progtrckr-steps', i + "");
+        elementByID("refStep1").className = "progtrckr-now";
+        elementByID("refactoring_step_desc").innerHTML = stepsDesc.get(level).get(1);
+
         //    TODO if there is no more level
         //    submit my solution
+    }
+
+    function showRefactorStep(root) {
+        uploadFiles();
+        if (step <= refSteps) {
+            $.ajax({
+                url: '/main.java.servlets.RefactoringStepServlet',
+                data: {
+                    fileName: root,
+                    level: level,
+                    step: step
+                },
+                async: false,
+                type: 'POST',
+                success: function (data) {
+                    if (data.includes('FAIL')) {
+                        alert(data);
+                    } else {
+                        elementByID("refStep" + step).className = "progtrckr-done";
+                        step++;
+                        if (step > refSteps) {
+                            elementByID("refactoring_step").innerHTML = "Next level"
+                        } else {
+                            elementByID("refStep" + step).className = "progtrckr-now";
+                            elementByID("refactoring_step_desc").innerHTML = stepsDesc.get(level).get(step);
+                        }
+                    }
+                }
+            });
+
+        } else {
+            level++;
+            showRefactoringLevel(level);
+            elementByID("refactoring_step").innerHTML = "Next step"
+        }
     }
 
     function showLCStep(root) {
         uploadFiles();
         switch (step) {
+            case 0:
+                $.ajax({
+                    url: '/main.java.servlets.MethodsSelectorServlet',
+                    data: {
+                        fileName: root,
+                        level: level
+                    },
+                    async: false,
+                    type: 'POST',
+                    success: function (data) {
+                        if (data != "") {
+                            alert(data);
+                        } else {
+                            elementByID('pb0').className = "progtrckr-done";
+                            elementByID('pb1').className = "progtrckr-now";
+                            elementByID('leg_code_step_desc').innerHTML = 'Write documentation for methods that will be affected by change';
+                            elementByID('legacy_code_step').innerHTML = "Next step";
+                            step++;
+                        }
+                    }
+                });
+                break;
             case 1:
                 //Documentation for former methods
                 $.ajax({
@@ -341,22 +456,21 @@
                 });
                 break;
             case 7:
-                step = 0;
-                elementByID('pb1').className = "progtrckr-now";
+                elementByID('pb0').className = "progtrckr-now";
+                elementByID('pb1').className = "progtrckr-todo";
                 elementByID('pb2').className = "progtrckr-todo";
                 elementByID('pb3').className = "progtrckr-todo";
                 elementByID('pb4').className = "progtrckr-todo";
                 elementByID('pb5').className = "progtrckr-todo";
                 elementByID('pb6').className = "progtrckr-todo";
-                elementByID('leg_code_step_desc').innerHTML = 'Write documentation for methods that will be affected by change';
-                //TODO - show next level description
+                elementByID('leg_code_step_desc').innerHTML = 'Find methods that will be affected by change (used/modified...)';
                 level++;
-                step++;
+                showLCLevel(level);
                 break;
         }
 
-    }
 
+    }
 
 
 </script>

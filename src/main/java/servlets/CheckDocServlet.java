@@ -1,5 +1,6 @@
 package servlets;
 
+import main.Parser;
 import main.XMLClasses.Exercise;
 import main.XMLClasses.ExerciseFile;
 import main.XMLClasses.LevelMethod;
@@ -29,7 +30,7 @@ public class CheckDocServlet extends HttpServlet {
             if (exercise.getLanguage().equals("python")) {
                 for (ExerciseFile ef : exercise.getFiles().values()) {
                     if (ef.isCode())
-                        methodsWithDoc.addAll(getMethodsWithDoc(fileName + "/" + ef.getName()));
+                        methodsWithDoc.addAll(Parser.getMethodsWithDoc(fileName + "/" + ef.getName()));
                 }
             }
             for (LevelMethod lm : exercise.getLevel(level).getMethods()) {
@@ -53,26 +54,4 @@ public class CheckDocServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     }
 
-
-    private static ArrayList<String> getMethodsWithDoc(String filename) {
-        ArrayList<String> methods = new ArrayList<>();
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(new File(filename)));
-            String line = br.readLine();
-            while (line != null) {
-                String lineBefore = line;
-                line = br.readLine();
-                if (line != null && line.trim().startsWith("\"\"\"")) {
-                    if (lineBefore.trim().startsWith("def")) {
-                        methods.add(lineBefore.trim().substring(0, lineBefore.indexOf("(")).replace("def ", "").trim());
-                    }
-                }
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return methods;
-    }
 }
