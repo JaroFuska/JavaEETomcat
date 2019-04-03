@@ -211,6 +211,10 @@
         document.getElementById('leg_code_container').style.display = 'none';
     }
 
+    if (exerciseType == 'LEGACY_CODE') {
+        document.getElementById('refactoring_container').style.display = 'none';
+    }
+
     function showTDDLevel(level) {
         clearLights();
         var levelDiv = document.getElementsByClassName("level")[0];

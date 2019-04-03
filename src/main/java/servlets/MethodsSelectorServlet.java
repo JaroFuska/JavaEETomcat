@@ -53,7 +53,9 @@ public class MethodsSelectorServlet extends HttpServlet {
                 }
             }
             UIManager.put("OptionPane.minimumSize", new Dimension(500, 300));
-            JOptionPane.showMessageDialog(null, methodsPanel, "Select methods that will be affected by change", QUESTION_MESSAGE);
+            JFrame jf = new JFrame();
+            jf.setAlwaysOnTop(true);
+            JOptionPane.showMessageDialog(jf, methodsPanel, "Select methods that will be affected by change", QUESTION_MESSAGE);
             int mismatchedMethods = 0;
             int missingMethods = 0;
             for (Component b : methodsPanel.getComponents()) {
