@@ -35,7 +35,7 @@ public class SaveCodeServlet extends HttpServlet {
         int exerciseID = Integer.parseInt((String)request.getSession().getAttribute("ex"));
 
         ArangoDBManager arangoDB = new ArangoDBManager();
-        String key = arangoDB.getKey(user.getUser_id(), exerciseID, version);
+        String key = arangoDB.getKey(user.getUser_id(), exerciseID, (version == 0 ? 1 : version));
         arangoDB.updateAttribute(key, ((fileName.startsWith("/")) ? fileName.substring(1) : fileName), content);
 
     }

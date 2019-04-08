@@ -4,7 +4,6 @@ import docker.DockerManager;
 import main.User;
 import main.XMLClasses.Exercise;
 import main.XMLClasses.ExerciseFile;
-import main.XMLClasses.LevelMethod;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -13,7 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.StringJoiner;
 
 @WebServlet(name = "/main.java.servlets.RefactoringStepServlet", urlPatterns = {"/main.java.servlets.RefactoringStepServlet"})
 @MultipartConfig

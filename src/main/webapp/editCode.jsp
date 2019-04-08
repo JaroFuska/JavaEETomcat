@@ -1,4 +1,3 @@
-<%@ page import="java.io.File" %>
 <%@ page import="dbmanager.DbManager" %>
 <%@ page import="main.User" %>
 <%@ page import="main.XMLClasses.Exercise" %>
@@ -204,6 +203,7 @@
     if (exerciseType == 'TDD') {
         showTDDLevel(level);
         document.getElementById('leg_code_container').style.display = 'none';
+        document.getElementById('refactoring_container').style.display = 'none';
     }
 
     if (exerciseType == 'REFACTORING') {

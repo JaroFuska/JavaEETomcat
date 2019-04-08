@@ -1,8 +1,6 @@
 package servlets;
 
-import docker.DockerManager;
 import main.Parser;
-import main.User;
 import main.XMLClasses.Exercise;
 import main.XMLClasses.ExerciseFile;
 import main.XMLClasses.LevelMethod;
@@ -17,7 +15,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.StringJoiner;
 
 import static javax.swing.JOptionPane.QUESTION_MESSAGE;
 
