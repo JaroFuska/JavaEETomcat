@@ -22,10 +22,11 @@ public class ExercisesServlet extends HttpServlet {
         ArrayList<String> list = new ArrayList<>();
         if (user.isTeacher()) {
             for (int i = 1; i <= dbManager.getExercisesCount(); i++) {
-                list.add(i + "");
+                list.add(i + " - " + dbManager.getExerciseDesc(String.valueOf(i)));
+
             }
         } else {
-            list = (ArrayList<String>) dbManager.getVisibleExercises();
+            list = (ArrayList<String>) dbManager.getVisibleExercisesWithDesc();
         }
         String json = new Gson().toJson(list);
         response.setContentType("application/json");

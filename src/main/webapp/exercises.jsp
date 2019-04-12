@@ -31,11 +31,10 @@
 <script type="text/javascript">
     var ex;
     $.post('/main.java.servlets.ExercisesServlet', function (data) {
-        // ex = data;
         var i = 0;
         $.each(JSON.parse(data), function(index, item) {
             var btn = document.createElement("BUTTON");
-            btn.id = item;
+            btn.id = item.substring(0,1);
             btn.className = "regular";
             var t = document.createTextNode("Exercise " + item);
             btn.appendChild(t);
@@ -43,14 +42,6 @@
             i++;
         });
         ex = i;
-        // for (i = 1; i <= data; i++) {
-        //     var btn = document.createElement("BUTTON");
-        //     btn.id = i;
-        //     btn.className = "regular";
-        //     var t = document.createTextNode("Exercise " + i);
-        //     btn.appendChild(t);
-        //     document.getElementById("exercisesHolder").appendChild(btn);
-        // }
     });
 
     document.addEventListener('click', function (e) {

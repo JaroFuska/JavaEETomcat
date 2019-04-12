@@ -12,7 +12,7 @@ BODY {
     background: white;
     padding: 5px;
     height: 100%;
-    width: 100%;
+    width: 99%;
 }
 
 
@@ -26,6 +26,15 @@ H2 {
     font-size: 16px;
     font-weight: normal;
     margin: 0px 0px 10px 0px;
+}
+
+SELECT {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    width: 100%;
+    font-size: 15px;
+    color: white;
+    text-align: center;
+    background: black;
 }
 
 .containerC {
@@ -120,7 +129,7 @@ menu > menu {
     position: relative;
     top: -20px;
     left: 100%;
-    width: 100px;
+    width: 250px;
 }
 
 menu[title]:before {

@@ -36,14 +36,14 @@ public class RunCodeServletTDD extends HttpServlet {
                     if (exercise.getLanguage().equals("python")) {
                         ret = DockerManager.execStart(containerId, String.format("%s %s", exercise.getLanguage(), userTest.getName()));
                     } else if (exercise.getLanguage().equals("C++")) {
-                        ret = DockerManager.execStart(containerId, String.format("./userTest"));
+                        ret = DockerManager.execStart(containerId, String.format("cd UserTest && ./userTest && cd .."));
                     }
                 } else if (testType.equals("master_test")) {
                     ExerciseFile masterTest = exercise.getMasterTest();
                     if (exercise.getLanguage().equals("python")) {
                         ret = DockerManager.execStart(containerId, String.format("%s %s Level%s", exercise.getLanguage(), masterTest.getName(), level));
                     } else if (exercise.getLanguage().equals("C++")) {
-                        ret = DockerManager.execStart(containerId, String.format("./masterTest%s", level));
+                        ret = DockerManager.execStart(containerId, String.format("cd MasterTest && ./masterTest%s && cd ..", level));
                     }
                 } else if (testType.equals("both")) {
                     ExerciseFile masterTest = exercise.getMasterTest();
@@ -52,7 +52,7 @@ public class RunCodeServletTDD extends HttpServlet {
                     if (exercise.getLanguage().equals("python")) {
                         ret += DockerManager.execStart(containerId, String.format("%s %s Level%s", exercise.getLanguage(), masterTest.getName(), level));
                     } else if (exercise.getLanguage().equals("C++")) {
-                        ret = DockerManager.execStart(containerId, String.format("./masterTest%s", level));
+                        ret = DockerManager.execStart(containerId, String.format("cd MasterTest && ./masterTest%s && cd ..", level));
                     }
                     DockerManager.cleanUp(containerId);
                     containerId = DockerManager.createContainer(imageId);
@@ -62,7 +62,7 @@ public class RunCodeServletTDD extends HttpServlet {
                     if (exercise.getLanguage().equals("python")) {
                         ret += DockerManager.execStart(containerId, String.format("%s %s", exercise.getLanguage(), userTest.getName()));
                     } else if (exercise.getLanguage().equals("C++")) {
-                        ret = DockerManager.execStart(containerId, String.format("./userTest"));
+                        ret = DockerManager.execStart(containerId, String.format("cd UserTest && ./userTest && cd .."));
                     }
                 }
             }

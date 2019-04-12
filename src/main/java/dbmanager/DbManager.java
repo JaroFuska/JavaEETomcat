@@ -291,6 +291,25 @@ public class DbManager {
         return list;
     }
 
+    public List<String> getVisibleExercisesWithDesc() {
+        Connection con = getConnection();
+        List<String> list = new ArrayList<>();
+        try {
+            Statement statement = con.createStatement();
+            ResultSet rs = statement.executeQuery("SELECT exercise_id FROM dp_exercises WHERE visible = 1");
+            while (rs.next()) {
+                String exNum = Integer.toString(rs.getInt(1));
+                String exDesc = getExerciseDesc(exNum);
+                list.add(exNum + " - " + (exDesc.length() > 100 ? exDesc.substring(0, 100) + "..." : exDesc));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection(con);
+        }
+        return list;
+    }
+
     public String getExerciseDesc(String exerciseID) {
         Connection con = getConnection();
         String ret = "";

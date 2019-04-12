@@ -40,10 +40,6 @@ $(window).load(function () {
         ctxMenu.style.display = "block";
         ctxMenu.style.left = (event.pageX - 10) + "px";
         ctxMenu.style.top = (event.pageY - 10) + "px";
-        var addFile = document.getElementById("addFile");
-        addFile.addEventListener("click", function (event) {
-            alert("Creating new file");
-        });
     }, false);
     projectStructure.addEventListener("click", function (event) {
         var ctxMenu = document.getElementById("ctxMenu");
@@ -77,19 +73,55 @@ function createNewVersion() {
     });
 }
 
+function chooseVersion() {
+    if (elementByID("versionSelectDiv").style.display == 'none') {
+        elementByID("versionSelectDiv").style.display = 'block';
+    } else {
+        elementByID("versionSelectDiv").style.display = 'none';
+    }
+    $("#versionSelect").toggle();
+    $("#openSelectedVersion").toggle();
+}
+
+function openVersion() {
+    var sel = elementByID("versionSelect");
+    var ver = sel.options[sel.selectedIndex].value;
+    $.ajax({
+        url: '/main.java.servlets.CreateProjectServlet',
+        data: {
+            version: ver
+        },
+        async: false,
+        type: 'POST',
+        success: function (data) {
+            if (data == "") {
+                alert("Not valid request");
+            } else {
+                document.location.href = '/editCode.jsp?root=' + data;
+            }
+        }
+    });
+}
+
 function runFiles() {
     uploadFiles();
-    //TODO - run some general run servlet (not implemented yet)
-    // $.post('/main.java.servlets.RunCodeServlet?fileName=' + currentFile, function (data) {
-    //     alert(data);
-    // });
+    $.ajax({
+        url: '/main.java.servlets.RunCodeServlet',
+        data: {
+            fileName: currentFile
+        },
+        async: false,
+        type: 'POST',
+        success: function (data) {
+            alert(data)
+        }
+    });
 
 }
 
 window.onbeforeunload = function () {
     if (editedFiles.size > 0) {
-        uploadFiles();
-        return 'Save your code first';
+        return 'You have unsaved code';
     } else {
         return;
     }

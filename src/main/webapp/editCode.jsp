@@ -19,6 +19,7 @@
         exerciseDesc = "Exercise " + ex + " - " + exerciseDesc;
     }
     int version = Integer.parseInt((String) request.getSession().getAttribute("version"));
+    int lastVersion = db.getUserLastVersion(Integer.parseInt(exercise.getId()), user.getUser_id());
 %>
 <html lang="en">
 <head>
@@ -88,7 +89,6 @@
 <section id="editorTab" class="containerC">
     <input id="fileName" type="hidden" value=""/>
     <menu id="ctxMenu">
-        <menu id="addFile" title="Add file"></menu>
         <menu id="uploadProject" title="Upload project" onclick="uploadFiles()"></menu>
         <menu id="createNewVersion" title="Create new version from this" onclick="createNewVersion()"></menu>
         <menu id="runProject" title="Run project" onclick="runFiles()"></menu>
@@ -112,15 +112,28 @@
         </button>
     </div>
     <button class="regular" id="uploadFiles" onclick="uploadFiles()">Upload codes</button>
-    <button class="regular" id="createNewProjectVersion" onclick="createNewVersion()">Create version <%=(version + 1)%>
+    <button class="regular" id="runFiles" onclick="runFiles()">Run codes</button>
+    <button class="regular" id="createNewProjectVersion" onclick="createNewVersion()">Create version <%=(lastVersion + 1)%>
         from
         this state
     </button>
-    <button class="regular" id="runFiles" onclick="runFiles()">Run codes</button>
+    <button class="regular" id="chooseVersion"onclick="chooseVersion()">Choose version to edit</button>
+    <div id="versionSelectDiv" style="display:none;border: 3px solid black;padding: 10px;background: gray;">
+    <select id="versionSelect" style="display:none">
+    </select>
+    <button class="regular" id="openSelectedVersion" onclick="openVersion()" style="display:none;color: white;background: black;border: 1px solid lightgray;">Edit this version</button>
+    </div>
 </section>
 
 </body>
 <script type="text/javascript">
+    for (i = 1; i <= <%=lastVersion%>; i++) {
+        var versionItem = document.createElement("OPTION");
+        versionItem.value = i + "";
+        var t = document.createTextNode("Version " + i);
+        versionItem.appendChild(t);
+        document.getElementById("versionSelect").appendChild(versionItem);
+    }
     function elementByID(elementID) {
         return document.getElementById(elementID);
     }

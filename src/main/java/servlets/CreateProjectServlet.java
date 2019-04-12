@@ -27,13 +27,14 @@ public class CreateProjectServlet extends HttpServlet {
     }
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int exerciseID = Integer.parseInt(request.getParameter("ex"));
+        boolean isVersionChange = (request.getSession().getAttribute("version") != null && request.getSession().getAttribute("version") != "-1");
+        int exerciseID = (isVersionChange ? Integer.parseInt((String)request.getSession().getAttribute("ex")) : Integer.parseInt(request.getParameter("ex")));
         String rootDir =  "";
         User user = (User) request.getSession().getAttribute("user");
         request.getSession().setAttribute("user", user);
         Exercise exercise = new Exercise(dbManager.dp_exercises_get_config_file(String.valueOf(exerciseID)));
         request.getSession().setAttribute("exercise", exercise);
-        int version = dbManager.getUserLastVersion(exerciseID, user.getUser_id());
+        int version = (isVersionChange ? Integer.parseInt(request.getParameter("version")) : dbManager.getUserLastVersion(exerciseID, user.getUser_id()));
         request.getSession().setAttribute("ex", Integer.toString(exerciseID));
         request.getSession().setAttribute("version", Integer.toString(version));
         try {

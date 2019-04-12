@@ -52,7 +52,8 @@
         $.ajax({
             url: '/main.java.servlets.CreateProjectServlet',
             data: {
-                ex: "<%=ex%>"
+                ex: "<%=ex%>",
+                version: '-1'
             },
             type: 'POST',
             success: function (data) {
