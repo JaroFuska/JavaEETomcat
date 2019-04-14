@@ -53,7 +53,7 @@
             url: '/main.java.servlets.CreateProjectServlet',
             data: {
                 ex: "<%=ex%>",
-                version: '-1'
+                versionChange: 'false'
             },
             type: 'POST',
             success: function (data) {

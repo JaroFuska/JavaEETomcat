@@ -27,7 +27,7 @@ public class CreateProjectServlet extends HttpServlet {
     }
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        boolean isVersionChange = (request.getSession().getAttribute("version") != null && request.getSession().getAttribute("version") != "-1");
+        boolean isVersionChange = (request.getParameter("versionChange") != null && request.getParameter("versionChange").equals("true"));
         int exerciseID = (isVersionChange ? Integer.parseInt((String)request.getSession().getAttribute("ex")) : Integer.parseInt(request.getParameter("ex")));
         String rootDir =  "";
         User user = (User) request.getSession().getAttribute("user");

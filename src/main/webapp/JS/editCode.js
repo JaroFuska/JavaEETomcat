@@ -89,7 +89,8 @@ function openVersion() {
     $.ajax({
         url: '/main.java.servlets.CreateProjectServlet',
         data: {
-            version: ver
+            version: ver,
+            versionChange: 'true'
         },
         async: false,
         type: 'POST',

@@ -61,6 +61,7 @@
 </div>
 
 <div id="leg_code_container">
+    <p id="leg_code_level_desc">Find methods that will be affected by change (used/modified...)</p>
     <ol class="progtrckr" data-progtrckr-steps="7">
         <li id="pb0" class="progtrckr-now">Know your enemy</li>
         <li id="pb1" class="progtrckr-todo">Documentation</li>
@@ -181,6 +182,7 @@
         files_types.set('<%=file_name%>', '<%=type%>');
     <%
     }
+//    TODO - legacy code level description - leg_code_level_desc
     if (exercise.getType().toUpperCase().contains("REFACTOR")) {
         for (int lev : exercise.getLevels().keySet()) { %>
     var descriptions = new Map(); <%

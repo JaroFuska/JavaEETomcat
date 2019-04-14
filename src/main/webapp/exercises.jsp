@@ -57,7 +57,8 @@
                     $.ajax({
                         url: '/main.java.servlets.CreateProjectServlet',
                         data: {
-                            ex: id
+                            ex: id,
+                            versionChange: "false"
                         },
                         type: 'POST',
                         success: function (data) {
