@@ -120,26 +120,4 @@ public class DockerManager {
         }
         return ret;
     }
-
-    public static void main(String[] args) {
-        try {
-//            DockerClient dockerClient = DefaultDockerClient.fromEnv().connectionPoolSize(100).build();
-//            TODO - version for HTTPS support
-//            final DockerClient docker = DefaultDockerClient.builder()
-//                    .uri(URI.create("https://boot2docker:2376"))
-//                    .dockerCertificates(new DockerCertificates(Paths.get("/Users/rohan/.docker/boot2docker-vm/")))
-//                    .build();
-
-            Path docFile = Paths.get("C:\\DP\\python_docker_test3\\Dockerfile");
-            String imageId = buildImage(docFile, "testingimage:latest");
-            String containerId = createContainer(imageId);
-            String execOutput = execStart(containerId, "python -m unittest discover");
-
-            System.out.println(execOutput);
-
-            dockerClient.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

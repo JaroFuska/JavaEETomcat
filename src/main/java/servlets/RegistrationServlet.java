@@ -33,7 +33,6 @@ public class RegistrationServlet extends HttpServlet {
             if (regReturn == "OK") {
                 response.sendRedirect("settings.jsp");
             } else {
-                //TODO - print info about what goes wrong
                 response.sendRedirect("settings.jsp");
             }
         } else {
@@ -44,7 +43,6 @@ public class RegistrationServlet extends HttpServlet {
             if (regReturn == "OK") {
                 response.sendRedirect("index.jsp");
             } else {
-                //TODO - print info about what goes wrong
                 response.sendRedirect("registration.jsp");
             }
         }

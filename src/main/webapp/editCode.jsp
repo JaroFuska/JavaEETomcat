@@ -182,7 +182,6 @@
         files_types.set('<%=file_name%>', '<%=type%>');
     <%
     }
-//    TODO - legacy code level description - leg_code_level_desc
     if (exercise.getType().toUpperCase().contains("REFACTOR")) {
         for (int lev : exercise.getLevels().keySet()) { %>
     var descriptions = new Map(); <%
@@ -201,7 +200,6 @@
 <script type="text/javascript">
     var step = 0;
     var refSteps = 0;
-    //TODO take level from DB - personalize for student where he ended
     var level = 1;
     if (exerciseType != 'TDD') {
         elementByID('workflowPanel').style.display = 'none';
@@ -227,52 +225,56 @@
     }
 
     if (exerciseType == 'LEGACY_CODE') {
+        showLCLevel(level);
         document.getElementById('refactoring_container').style.display = 'none';
     }
 
     function showTDDLevel(level) {
-        clearLights();
-        var levelDiv = document.getElementsByClassName("level")[0];
-        var descriptionElement = levelDiv.getElementsByTagName("p")[0];
-        descriptionElement.innerHTML = levelsDesc[level];
-        //    TODO if there is no more level
-        //    submit my solution
+        if (level >= levelsDesc.length) {
+            alert('Congratulations! You finished the last level! Feel free to do another exercise.');
+        } else {
+            clearLights();
+            var levelDiv = document.getElementsByClassName("level")[0];
+            var descriptionElement = levelDiv.getElementsByTagName("p")[0];
+            descriptionElement.innerHTML = levelsDesc[level];
+        }
     }
 
     function showLCLevel(level) {
-        var levelDiv = document.getElementsByClassName("level")[0];
-        var descriptionElement = levelDiv.getElementsByTagName("p")[0];
-        descriptionElement.innerHTML = levelsDesc[level];
-        step = 0;
-        //    TODO if there is no more level
-        //    submit my solution
+        if (level >= levelsDesc.length) {
+            alert('Congratulations! You finished the last level! Feel free to do another exercise.');
+        } else {
+            elementByID('leg_code_level_desc').innerHTML = 'Level ' + level + ' - ' + levelsDesc[level];
+            step = 0;
+        }
     }
 
     function showRefactoringLevel(level) {
-        var levelDiv = document.getElementsByClassName("level")[0];
-        var descriptionElement = levelDiv.getElementsByTagName("p")[0];
-        descriptionElement.innerHTML = levelsDesc[level];
-        step = 1;
-        var olElem = elementByID('refactoring_prog_bar');
-        while (olElem.hasChildNodes()) {
-            olElem.removeChild(olElem.firstChild);
+        if (level >= levelsDesc.length) {
+            alert('Congratulations! You finished the last level! Feel free to do another exercise.');
+        } else {
+            var levelDiv = document.getElementsByClassName("level")[0];
+            var descriptionElement = levelDiv.getElementsByTagName("p")[0];
+            descriptionElement.innerHTML = levelsDesc[level];
+            step = 1;
+            var olElem = elementByID('refactoring_prog_bar');
+            while (olElem.hasChildNodes()) {
+                olElem.removeChild(olElem.firstChild);
+            }
+            var i;
+            for (i = 1; i < stepsDesc.get(level).size + 1; i++) {
+                var liElem = document.createElement("LI");
+                liElem.className = 'progtrckr-todo';
+                liElem.id = 'refStep' + i;
+                liElem.innerHTML = 'Step ' + i;
+                olElem.appendChild(liElem);
+            }
+            i--;
+            refSteps = i;
+            elementByID("refactoring_prog_bar").setAttribute('data-progtrckr-steps', i + "");
+            elementByID("refStep1").className = "progtrckr-now";
+            elementByID("refactoring_step_desc").innerHTML = stepsDesc.get(level).get(1);
         }
-        var i;
-        for (i = 1; i < stepsDesc.get(level).size + 1; i++) {
-            var liElem = document.createElement("LI");
-            liElem.className = 'progtrckr-todo';
-            liElem.id = 'refStep' + i;
-            liElem.innerHTML = 'Step ' + i;
-            olElem.appendChild(liElem);
-        }
-        i--;
-        refSteps = i;
-        elementByID("refactoring_prog_bar").setAttribute('data-progtrckr-steps', i + "");
-        elementByID("refStep1").className = "progtrckr-now";
-        elementByID("refactoring_step_desc").innerHTML = stepsDesc.get(level).get(1);
-
-        //    TODO if there is no more level
-        //    submit my solution
     }
 
     function showRefactorStep(root) {

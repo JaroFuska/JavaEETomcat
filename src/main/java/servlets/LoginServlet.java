@@ -20,7 +20,6 @@ public class LoginServlet extends HttpServlet {
     DbManager dbManager = new DbManager();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        TODO - print message about waiting for approval
         String login = request.getParameter("login");
         String pass = null;
         try {

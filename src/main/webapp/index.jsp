@@ -33,7 +33,6 @@
                 },
                 success: function (response) {
                     if (response=='fail') {
-                        //TODO - print message
                         alert("Wrong Details");
                     }
                     else {

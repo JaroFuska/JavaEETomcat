@@ -42,7 +42,6 @@
                                          directory><br>
     Visible <input type="checkbox" id="visible" name="visible"><br>
     <input type="hidden" name="ex" value="<%=ex%>"/>
-    <%--<input type="submit" value="Upload">--%>
     <button class="regular" type="submit">Upload</button>
 </form>
 <button class="regular" id="editCodes">Edit code</button>

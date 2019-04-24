@@ -10,8 +10,7 @@ $(window).load(function () {
         name: 'save',
         bindKey: {win: "Ctrl-S", "mac": "Cmd-S"},
         exec: function (editor) {
-            // TODO handle save - call upload file for just currentFile
-            // alert(editor.session.getValue());
+            uploadFiles();
         }
     });
     editor.on("change", function () {
