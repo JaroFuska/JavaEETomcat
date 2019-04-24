@@ -2,6 +2,7 @@
 <%@ page import="main.User" %>
 <%@ page import="main.XMLClasses.Exercise" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="dbmanager.ArangoDBManager" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     String root = request.getParameter("root");
@@ -14,12 +15,13 @@
     boolean teacher = user.isTeacher();
     String ex = (String) request.getSession().getAttribute("ex");
     DbManager db = new DbManager();
+    ArangoDBManager arDB = new ArangoDBManager();
     String exerciseDesc = db.getExerciseDesc(ex);
     if (exercise.getType().toUpperCase().contains("LEGACY") || exercise.getType().toUpperCase().contains("REFACTOR")) {
         exerciseDesc = "Exercise " + ex + " - " + exerciseDesc;
     }
     int version = Integer.parseInt((String) request.getSession().getAttribute("version"));
-    int lastVersion = db.getUserLastVersion(Integer.parseInt(exercise.getId()), user.getUser_id());
+    int lastVersion = arDB.getUserLastVersion(Integer.parseInt(exercise.getId()), user.getUser_id());
 %>
 <html lang="en">
 <head>

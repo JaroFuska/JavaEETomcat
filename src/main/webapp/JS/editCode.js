@@ -68,7 +68,7 @@ function uploadFiles() {
 function createNewVersion() {
     uploadFiles();
     $.post('/main.java.servlets.CreateNewVersionServlet', function (data) {
-
+        location.reload(true);
     });
 }
 

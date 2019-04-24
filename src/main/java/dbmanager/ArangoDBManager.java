@@ -6,6 +6,9 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.util.MapBuilder;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 public class ArangoDBManager {
@@ -72,33 +75,21 @@ public class ArangoDBManager {
         insertDocument(doc);
     }
 
-
-    public static void main(String[] args) {
-//        ArangoDBManager dbMan = new ArangoDBManager();
-//        System.out.println();
-//        arangoDB.createDatabase(DB);
-//        CollectionEntity collection = arangoDB.db(DB).createCollection(COLLECTION);
-
-
-//        BaseDocument document = new BaseDocument();
-//        document.setKey("key");
-//        document.addAttribute("a", "foo");
-//        arangoDB.db(DB).collection(COLLECTION).insertDocument(document);
-
-//        BaseDocument myDocument = arangoDB.db(DB).collection(COLLECTION).getDocument("key",
-//                BaseDocument.class);
-//        System.out.println("Key: " + myDocument.getKey());
-//        System.out.println("Attribute a: " + myDocument.getAttribute("a"));
-
-//        arangoDB.db(DB).collection(COLLECTION).deleteDocument("key");
-//        arangoDB.db(DB).collection(COLLECTION).deleteDocument("key2");
-
-//        ArangoDBManager dbMan = new ArangoDBManager();
-//        dbMan.getDocument("dsadsa");
-//        System.out.println();
-
-
+    public int getUserLastVersion(int exerciseID, int userId) {
+        ArrayList<Integer> keys = new ArrayList<>();
+        try {
+            String query = "FOR t IN user_exercise_files FILTER t._key like @key RETURN t";
+            Map<String, Object> bindVars = new MapBuilder().put("key",  userId + "-" + exerciseID + "-%").get();
+            ArangoCursor<BaseDocument> cursor = arangoDB.db(DB).query(query, bindVars, null, BaseDocument.class);
+            cursor.forEachRemaining(doc -> {
+                keys.add(Integer.parseInt(doc.getKey().split("-")[2]));
+            });
+        } catch (ArangoDBException e) {
+            System.err.println("Failed to execute query. " + e.getMessage());
+        }
+        return keys.size() == 0 ? 0 : Collections.max(keys);
     }
+
 
 
 }

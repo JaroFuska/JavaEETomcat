@@ -1,5 +1,6 @@
 package servlets;
 
+import dbmanager.ArangoDBManager;
 import dbmanager.DbManager;
 import main.User;
 import main.XMLClasses.Exercise;
@@ -17,6 +18,7 @@ import java.sql.SQLException;
 @MultipartConfig
 public class CreateProjectServlet extends HttpServlet {
     DbManager dbManager = new DbManager();
+    ArangoDBManager arangoManager = new ArangoDBManager();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         processRequest(request, response);
@@ -34,7 +36,7 @@ public class CreateProjectServlet extends HttpServlet {
         request.getSession().setAttribute("user", user);
         Exercise exercise = new Exercise(dbManager.dp_exercises_get_config_file(String.valueOf(exerciseID)));
         request.getSession().setAttribute("exercise", exercise);
-        int version = (isVersionChange ? Integer.parseInt(request.getParameter("version")) : dbManager.getUserLastVersion(exerciseID, user.getUser_id()));
+        int version = (isVersionChange ? Integer.parseInt(request.getParameter("version")) : arangoManager.getUserLastVersion(exerciseID, user.getUser_id()));
         request.getSession().setAttribute("ex", Integer.toString(exerciseID));
         request.getSession().setAttribute("version", Integer.toString(version));
         try {

@@ -249,7 +249,7 @@ public class DbManager {
             ResultSet rs = statement.executeQuery();
             rs.next();
             Blob conf_file = rs.getBlob(1);
-            ret = new String(conf_file.getBytes(1l, (int)conf_file.length()));
+            ret = new String(conf_file.getBytes(1l, (int) conf_file.length()));
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -356,32 +356,13 @@ public class DbManager {
             if (version > 0) {
 //            has own files for exercise
                 BaseDocument document = arangoManager.getDocument(String.format("%d-%d-%d", user_id, exerciseID, version));
-                if (document == null || document.getProperties().size() == 0) {
-//                do not have personal cache
-                    sql = "SELECT file, path FROM dp_user_files WHERE exercise_id = ? AND user_id = ? AND version = ?";
-                    ps = conn.prepareStatement(sql);
-                    ps.setInt(1, exerciseID);
-                    ps.setInt(2, user_id);
-                    ps.setInt(3, version);
-                    resultSet = ps.executeQuery();
-                    BaseDocument newExerciseDocument = new BaseDocument();
-                    newExerciseDocument.setKey(String.format("%d-%d-%d", user_id, exerciseID, version));
-                    while (resultSet.next()) {
-                        String path = resultSet.getString("path");
-                        InputStream is = resultSet.getBinaryStream("file");
-                        mainDir = createFile(path, is, mainDir);
-                        java.sql.Blob ablob = resultSet.getBlob("file");
-                        String str = new String(ablob.getBytes(1l, (int) ablob.length()));
-                        newExerciseDocument.addAttribute(path, str);
-                    }
-                    arangoManager.insertDocument(newExerciseDocument);
-                } else {
+
 //                have personal cache
-                    for (Map.Entry<String, Object> entry : document.getProperties().entrySet()) {
-                        InputStream is = org.apache.commons.io.IOUtils.toInputStream((String) entry.getValue(), "UTF-8");
-                        mainDir = createFile(entry.getKey(), is, mainDir);
-                    }
+                for (Map.Entry<String, Object> entry : document.getProperties().entrySet()) {
+                    InputStream is = org.apache.commons.io.IOUtils.toInputStream((String) entry.getValue(), "UTF-8");
+                    mainDir = createFile(entry.getKey(), is, mainDir);
                 }
+
             } else {
 //            do not have own files for exercise
                 BaseDocument document = arangoManager.getDocument(String.format("%d", exerciseID));
@@ -408,7 +389,7 @@ public class DbManager {
                     for (Map.Entry<String, Object> entry : document.getProperties().entrySet()) {
                         InputStream is = org.apache.commons.io.IOUtils.toInputStream((String) entry.getValue(), "UTF-8");
                         mainDir = createFile(entry.getKey(), is, mainDir);
-                        dp_user_files_insert(user_id, exerciseID, is, entry.getKey(), 1);
+//                        dp_user_files_insert(user_id, exerciseID, is, entry.getKey(), 1);
                     }
                     ArangoDBManager arangoDB = new ArangoDBManager();
                     BaseDocument doc = arangoDB.getDocument(exerciseID);
@@ -567,28 +548,28 @@ public class DbManager {
         }
         return "OK";
     }
-
-    public int getUserLastVersion(int exerciseID, int user_id) {
-        Connection con = getConnection();
-        String sql = "SELECT max(version) FROM dp_user_files WHERE exercise_id = ? AND user_id = ?";
-        PreparedStatement ps = null;
-        int version = 0;
-        try {
-            ps = con.prepareStatement(sql);
-            ps.setInt(1, exerciseID);
-            ps.setInt(2, user_id);
-            ResultSet resultSet = ps.executeQuery();
-            resultSet.next();
-            if (resultSet.getInt(1) > 0) {
-                version = resultSet.getInt(1);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closeConnection(con);
-        }
-        return version;
-    }
+//
+//    public int getUserLastVersion(int exerciseID, int user_id) {
+//        Connection con = getConnection();
+//        String sql = "SELECT max(version) FROM dp_user_files WHERE exercise_id = ? AND user_id = ?";
+//        PreparedStatement ps = null;
+//        int version = 0;
+//        try {
+//            ps = con.prepareStatement(sql);
+//            ps.setInt(1, exerciseID);
+//            ps.setInt(2, user_id);
+//            ResultSet resultSet = ps.executeQuery();
+//            resultSet.next();
+//            if (resultSet.getInt(1) > 0) {
+//                version = resultSet.getInt(1);
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } finally {
+//            closeConnection(con);
+//        }
+//        return version;
+//    }
 
     public String createNewVersion(int oldVresion, int newVersion, int userId, int exerciseId) {
         Connection con = getConnection();

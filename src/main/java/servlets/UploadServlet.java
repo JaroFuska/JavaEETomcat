@@ -28,7 +28,6 @@ public class UploadServlet extends HttpServlet {
         boolean visible = ((String) request.getParameter("visible")).equals("on");
 
         dbManager.dp_exercise_files_delete(exercise);
-        dbManager.dp_user_files_delete(exercise);
         ArangoDBManager arangoDBManager = new ArangoDBManager();
         arangoDBManager.deleteExerciseDocuments(String.valueOf(exercise));
 
